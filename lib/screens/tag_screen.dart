@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import '../widgets/important_data.dart';
-import '../constants.dart';
+import 'package:my_design/widgets/dark_beveled_card.dart';
 import 'package:my_design/widgets/tag_stack.dart';
 
 class ToggleableBool {
@@ -32,17 +32,19 @@ class TagScreen extends StatelessWidget {
             style: TextStyle(),
           ),
           leading: IconButton(
-              icon: Icon(
-                Icons.arrow_back_ios,
-              ),
-              onPressed: () {}),
+            icon: Icon(
+              Icons.arrow_back_ios,
+            ),
+            onPressed: () {},
+          ),
           actions: <Widget>[
             IconButton(
-                icon: Icon(
-                  Icons.more_horiz,
-                  size: 30,
-                ),
-                onPressed: () {})
+              icon: Icon(
+                Icons.more_horiz,
+                size: 30,
+              ),
+              onPressed: () {},
+            )
           ],
           centerTitle: true,
         ),
@@ -57,28 +59,15 @@ class TagScreen extends StatelessWidget {
               builder: (context, data, child) {
                 return Expanded(
                   child: Scrollbar(
-                                      child: ListView.builder(
-                      cacheExtent: 70000,
+                    child: ListView.builder(
                         shrinkWrap: true,
                         itemCount: data.top10.length,
                         itemBuilder: (context, index) {
-                          return Card(
-                            elevation: 0,
-                            shape: BeveledRectangleBorder(),
-                            color: Colors.black,
-                            child: ListTile(
-                              leading: Text(
-                                index.toString(),
-                                style: TextStyle(
-                                  fontSize: 20,
-                                ),
-                              ),
-                              title: Text(
-                                data.top10.keys.elementAt(index),
-                              ),
-                              subtitle: Text(
-                                  data.top10.values.elementAt(index).join(", ")),
-                            ),
+                          return DarkBeveledCard(
+                            title: data.top10.keys.elementAt(index),
+                            subtitle:
+                                data.top10.values.elementAt(index).join(", "),
+                            index: index,
                           );
                         }),
                   ),
