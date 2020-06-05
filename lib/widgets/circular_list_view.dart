@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'important_data.dart';
 
 class CircularListView extends StatelessWidget {
   final ScrollController _scrollController = ScrollController();
+  final int itemCount;
+  final Function itemBuilder;
+  CircularListView({this.itemCount,this.itemBuilder});
+  
+
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
@@ -12,27 +15,8 @@ class CircularListView extends StatelessWidget {
       child: ListView.builder(
         controller: _scrollController,
         scrollDirection: Axis.horizontal,
-        itemCount: Provider.of<ImportantData>(context).tags.length,
-        itemBuilder: (context, index) {
-          return Container(
-            alignment: Alignment.center,
-            child: Text(
-              Provider.of<ImportantData>(context).tags.keys.elementAt(index),
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 40,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-            width: 300,
-            color: Provider.of<ImportantData>(context)
-                .tags
-                .values
-                .elementAt(index)
-                .color,
-          );
-        },
+        itemCount: itemCount,
+        itemBuilder: itemBuilder,
       ),
     );
   }

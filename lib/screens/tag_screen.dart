@@ -5,22 +5,10 @@ import '../widgets/important_data.dart';
 import 'package:my_design/widgets/dark_beveled_card.dart';
 import 'package:my_design/widgets/tag_stack.dart';
 
-class ToggleableBool {
-  bool flag = false;
-  void toggle() {
-    flag = !flag;
-  }
-}
 
 class TagScreen extends StatelessWidget {
-  final ToggleableBool flag = ToggleableBool();
   @override
   Widget build(BuildContext context) {
-    if (!flag.flag) {
-      Provider.of<ImportantData>(context).updateTagsFromCF();
-      Provider.of<ImportantData>(context).updateTop10();
-      flag.toggle();
-    }
     return SafeArea(
       top: false,
       child: Scaffold(
@@ -35,7 +23,9 @@ class TagScreen extends StatelessWidget {
             icon: Icon(
               Icons.arrow_back_ios,
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
           actions: <Widget>[
             IconButton(
@@ -55,7 +45,7 @@ class TagScreen extends StatelessWidget {
               height: 400,
               color: Colors.black,
             ),
-            Consumer<ImportantData>(
+            Consumer<StackData>(
               builder: (context, data, child) {
                 return Expanded(
                   child: Scrollbar(

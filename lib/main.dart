@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'screens/tag_screen.dart';
-import 'constants.dart';
-
+import 'screens/main_screen.dart';
 import 'widgets/important_data.dart';
 import 'package:provider/provider.dart';
 
@@ -18,7 +17,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => ImportantData(),
+      create: (context) => StackData(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData.dark().copyWith(
@@ -29,7 +28,8 @@ class MyApp extends StatelessWidget {
         ),
         initialRoute: "/",
         routes: {
-          "/": (context) => TagScreen(),
+          "/" :(context)=> MainScreen(),
+          "/tagScreen": (context) => TagScreen(),
         },
       ),
     );

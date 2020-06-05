@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:my_design/constants.dart';
-import 'package:provider/provider.dart';
 import 'package:random_color/random_color.dart';
 
 class ColorTag {
@@ -11,14 +10,25 @@ class ColorTag {
   ColorTag({this.color, this.reps});
 }
 
-class ImportantData with ChangeNotifier {
+class ChangableString {
+  String data = "";
+  void chageTo(String data) {
+    this.data = data;
+  }
+}
+
+class StackData with ChangeNotifier {
   final Map<String, ColorTag> tags = {};
   final Map<String, List<String>> top10 = {};
+  final ChangableString handel = ChangableString();
 
+  void updateHandle(String newHandel) {
+    handel.chageTo(newHandel);
+  }
   void updateTop10() async {
     Map<String, List<String>> top10 = {};
     Set<String> problemNames = {};
-    String url = "https://codeforces.com/api/user.status?handle=TLE";
+    String url = "https://codeforces.com/api/user.status?handle=${handel.data}";
     http.Response response = await http.get(url);
     Map<String, dynamic> results = json.decode(response.body);
 
@@ -34,7 +44,7 @@ class ImportantData with ChangeNotifier {
             top10[submissionName].add(tag);
           }
         }
-      }else{
+      } else {
         break;
       }
     }
@@ -48,7 +58,7 @@ class ImportantData with ChangeNotifier {
     Set<String> problemNames = {};
     final Map<String, ColorTag> tags = {};
 
-    String url = "https://codeforces.com/api/user.status?handle=TLE";
+    String url = "https://codeforces.com/api/user.status?handle=${handel.data}";
     http.Response response = await http.get(url);
     Map<String, dynamic> results = json.decode(response.body);
 
