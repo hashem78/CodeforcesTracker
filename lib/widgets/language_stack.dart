@@ -4,9 +4,10 @@ import 'package:my_design/widgets/circular_list_view.dart';
 import 'package:my_design/data/centralized_data.dart';
 import 'package:provider/provider.dart';
 
-class TagStack extends StatelessWidget {
+class LanguageStack extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final values = Provider.of<Data>(context).langs.values;
     return Consumer<Data>(
       builder: (context, data, _) => Stack(
         fit: StackFit.expand,
@@ -20,18 +21,18 @@ class TagStack extends StatelessWidget {
                 show: false,
               ),
               sections: List.generate(
-                data.tags.length,
+                data.langs.length,
                 (index) => PieChartSectionData(
-                  value: data.tags.values.elementAt(index).reps.toDouble() < 100
+                  value: data.langs.values.elementAt(index).reps.toDouble() < 100
                       ? 100
-                      : data.tags.values.elementAt(index).reps.toDouble(),
+                      : data.langs.values.elementAt(index).reps.toDouble(),
                   titleStyle: TextStyle(
                     fontWeight: FontWeight.w900,
                     fontSize: 15,
                     color: Colors.black,
                   ),
-                  title: data.tags.values.elementAt(index).reps.toString(),
-                  color: data.tags.values.elementAt(index).color,
+                  title: values.elementAt(index).reps.toString(),
+                  color: values.elementAt(index).color,
                 ),
               ),
             ),
@@ -44,12 +45,12 @@ class TagStack extends StatelessWidget {
                 shape: CircleBorder(),
                 child: CircleAvatar(
                   child: CircularListView(
-                    itemCount: data.tags.length,
+                    itemCount: data.langs.length,
                     itemBuilder: (context, index) {
                       return Container(
                         alignment: Alignment.center,
                         child: Text(
-                          data.tags.keys.elementAt(index),
+                          data.langs.keys.elementAt(index),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.black,
@@ -58,7 +59,7 @@ class TagStack extends StatelessWidget {
                           ),
                         ),
                         width: 300,
-                        color: data.tags.values.elementAt(index).color,
+                        color: data.langs.values.elementAt(index).color,
                       );
                     },
                   ),

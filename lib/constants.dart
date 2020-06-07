@@ -54,3 +54,14 @@ const Color(0xFF993300),
 const Color(0xFF993366),	
 const Color(0xFF333399),
 ];
+
+const kHTTP_RESPONSE_SUCCESSFUL = 200;
+const kWORKING_SNAKCBAR_TEXT = "Working...";
+const kWORKING_SNACKBAR_DURATION_SECONDS = 3;
+
+const kHANDEL_MAIN_SCREEN_TITLE = "Enter your handel";
+
+const kHANDEL_TRACK_BUTTON_TEXT = "Track";
+
+const kERROR_SNACK_BACK_DURATION_SECONDS = 3;
+const kERROR_HANDEL_DNE_TEXT = "Error! handel does not exist";

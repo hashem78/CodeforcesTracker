@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:my_design/widgets/tabs.dart';
+import 'package:provider/provider.dart';
 import 'screens/tag_screen.dart';
 import 'screens/main_screen.dart';
-import 'widgets/important_data.dart';
-import 'package:provider/provider.dart';
+import 'data/centralized_data.dart';
 
 void main() {
   runApp(MyApp());
@@ -12,12 +13,11 @@ void main() {
       SystemUiOverlayStyle(statusBarColor: Colors.transparent));
 }
 
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => StackData(),
+      create: (context) => Data(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData.dark().copyWith(
@@ -28,7 +28,8 @@ class MyApp extends StatelessWidget {
         ),
         initialRoute: "/",
         routes: {
-          "/" :(context)=> MainScreen(),
+          "/": (context) => MainScreen(),
+          "/tabs": (context) => MyTabs(),
           "/tagScreen": (context) => TagScreen(),
         },
       ),

@@ -1,19 +1,48 @@
 import 'package:flutter/material.dart';
-import 'package:my_design/widgets/important_data.dart';
-import 'package:provider/provider.dart';
+import 'package:my_design/constants.dart';
+import 'package:my_design/data/centralized_data.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+
+SnackBar workingSnackBar = SnackBar(
+  backgroundColor: Colors.transparent,
+  content: ListTile(
+    leading: CircularProgressIndicator(),
+    title: Text(
+      kWORKING_SNAKCBAR_TEXT,
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        color: Colors.blue,
+        fontSize: 20,
+      ),
+    ),
+  ),
+  duration: Duration(
+    seconds: kWORKING_SNACKBAR_DURATION_SECONDS,
+  ),
+);
+
+SnackBar errorSnackBar = SnackBar(
+  backgroundColor: Colors.transparent,
+  content: ListTile(
+    leading: Icon(
+      Icons.error,
+    ),
+    title: Text(
+      kERROR_HANDEL_DNE_TEXT,
+      style: TextStyle(
+        color: Colors.red,
+      ),
+    ),
+  ),
+  duration: Duration(
+    seconds: kERROR_SNACK_BACK_DURATION_SECONDS,
+  ),
+);
 
 class MainScreen extends StatelessWidget {
   final myController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  Future<bool> checkValidHandel(String handel) async {
-    String url = "https://codeforces.com/api/user.status?handle=${handel}";
-    http.Response response = await http.get(url);
-    if (response.statusCode != 200) {
-      return false;
-    }
-    return true;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +55,7 @@ class MainScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  "Enter your handel",
+                  kHANDEL_MAIN_SCREEN_TITLE,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 60,
@@ -37,7 +66,7 @@ class MainScreen extends StatelessWidget {
                   child: Form(
                     key: _formKey,
                     child: TextFormField(
-                      autofocus: true,
+                      //autofocus: true,
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
                         fillColor: Colors.black,
@@ -55,36 +84,19 @@ class MainScreen extends StatelessWidget {
                 ),
                 Builder(
                   builder: (innerContext) => RaisedButton(
-                    child: Text("Track"),
+                    child: Text(kHANDEL_TRACK_BUTTON_TEXT),
                     onPressed: () async {
-                      FocusScope.of(context).unfocus();
-                      bool valid = await checkValidHandel(myController.text);
-                      if (!valid) {
-                        Scaffold.of(innerContext).showSnackBar(
-                          SnackBar(
-                            backgroundColor: Colors.transparent,
-                            content: ListTile(
-                              leading: Icon(
-                                Icons.error,
-                              ),
-                              title: Text(
-                                "Error! handel does not exist",
-                                style: TextStyle(
-                                  color: Colors.red,
-                                ),
-                              ),
-                            ),
-                            duration: Duration(seconds: 3),
-                          ),
-                        );
+                      Scaffold.of(innerContext).showSnackBar(workingSnackBar);
+                      String url =
+                          "https://codeforces.com/api/user.status?handle=${myController.text}&count=1";
+                      http.Response valid = await http.get(url);
+                      if (valid == null || valid.statusCode != 200) {
+                        Scaffold.of(innerContext).showSnackBar(errorSnackBar);
                       } else {
-                        Provider.of<StackData>(context, listen: false)
-                            .updateHandle(myController.text);
-                        Provider.of<StackData>(context, listen: false)
-                            .updateTagsFromCF();
-                        Provider.of<StackData>(context, listen: false)
-                            .updateTop10();
-                        Navigator.pushNamed(context, "/tagScreen");
+                        Provider.of<Data>(context,listen: false).updateHandle(myController.text);
+                        await Provider.of<Data>(context,listen: false).pullDataFromCF();
+                        
+                        Navigator.pushNamed(context, "/tabs");
                       }
                     },
                   ),
