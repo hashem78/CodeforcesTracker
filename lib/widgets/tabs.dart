@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:my_design/screens/tag_screen.dart';
-import 'package:my_design/screens/languages_screen.dart';
-import 'package:my_design/screens/verdicts_screen.dart';
+import 'package:my_design/screens/charted_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:my_design/data/centralized_data.dart';
 
 List<Tab> tabList = [
   Tab(
@@ -11,16 +11,22 @@ List<Tab> tabList = [
     child: Text("Languages"),
   ),
   Tab(
-    child: Text("Verdicts"),
+   child: Text("Verdicts"),
   ),
 ];
 
 class MyTabs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var data = Provider.of<Data>(context);
+    List<ChartedScreen> screens = [
+      ChartedScreen(data: data.tags,top10data:data.top10Tags),
+      ChartedScreen(data: data.langs,top10data: data.top10Langs),
+      ChartedScreen(data: data.verdicts,top10data: data.top10Verdicts,),
+    ];
     return SafeArea(
       child: DefaultTabController(
-        length: 3,
+        length: screens.length,
         child: Scaffold(
           appBar: AppBar(
             automaticallyImplyLeading: false,
@@ -29,11 +35,7 @@ class MyTabs extends StatelessWidget {
             ),
           ),
           body: TabBarView(
-            children: [
-              TagScreen(),
-              LanguageScreen(),
-              VerdictScreen(),
-            ],
+            children: screens,
           ),
         ),
       ),

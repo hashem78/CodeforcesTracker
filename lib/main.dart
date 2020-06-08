@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:my_design/widgets/tabs.dart';
 import 'package:provider/provider.dart';
-import 'screens/tag_screen.dart';
 import 'screens/main_screen.dart';
 import 'data/centralized_data.dart';
 
@@ -30,7 +29,6 @@ class MyApp extends StatelessWidget {
         routes: {
           "/": (context) => MainScreen(),
           "/tabs": (context) => MyTabs(),
-          "/tagScreen": (context) => TagScreen(),
         },
       ),
     );
