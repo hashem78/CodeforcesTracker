@@ -27,6 +27,7 @@ SnackBar errorSnackBar = SnackBar(
   content: ListTile(
     leading: Icon(
       Icons.error,
+      color: Colors.red, 
     ),
     title: Text(
       kERROR_HANDEL_DNE_TEXT,
@@ -93,9 +94,11 @@ class MainScreen extends StatelessWidget {
                       if (valid == null || valid.statusCode != 200) {
                         Scaffold.of(innerContext).showSnackBar(errorSnackBar);
                       } else {
-                        Provider.of<Data>(context,listen: false).updateHandle(myController.text);
-                        await Provider.of<Data>(context,listen: false).pullDataFromCF();
-                        
+                        Provider.of<Data>(context, listen: false)
+                            .updateHandle(myController.text);
+                        await Provider.of<Data>(context, listen: false)
+                            .pullDataFromCF();
+
                         Navigator.pushNamed(context, "/tabs");
                       }
                     },
