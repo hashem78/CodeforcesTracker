@@ -66,7 +66,7 @@ class ChartedScreen extends StatelessWidget {
                   subtitle: top10data.values is Iterable<String>
                       ? top10data.values.elementAt(index)
                       : top10data.values.elementAt(index).join(
-                          ", "), //top10data.values.elementAt(index).join(", "),
+                          ", "),
                   index: index,
                 );
               },
