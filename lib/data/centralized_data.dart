@@ -20,14 +20,17 @@ class ChangableString {
 class Data with ChangeNotifier {
   final Map<String, ColorTag> langs = {};
   final Map<String, ColorTag> tags = {};
+  final Map<String, ColorTag> verdicts = {};
 
   final Map<String, List<String>> top10Tags = {};
   final Map<String, List<String>> top10Langs = {};
+  final Map<String, String> top10Verdicts = {};
   final Set<String> _problemNames = {};
 
   final ChangableString _handel = ChangableString();
   int _tagColorIndex = 0;
   int _langColorIndex = 0;
+  int _verdictColorIndex = 0;
 
   void updateHandle(String newHandel) {
     _handel.chageTo(newHandel);
@@ -68,13 +71,50 @@ class Data with ChangeNotifier {
     }
   }
 
+  void pullVerdicts() {
+    for (var submission in _results['result']) {
+      String problemName = submission["problem"]["name"] as String;
+      String verdict = (submission["verdict"]) as String;
+      if (!verdicts.containsKey(verdict)) {
+        verdicts[verdict] = ColorTag(
+          color: _tagColorIndex < kcolors.length
+              ? kcolors[_verdictColorIndex++]
+              : RandomColor().randomColor(
+                  colorSaturation: ColorSaturation.highSaturation,
+                ),
+          reps: 1,
+        );
+      } else {
+        verdicts[verdict].reps++;
+      }
+      if (top10Verdicts.length < 10) {
+        top10Verdicts[problemName] = verdict;
+      }
+    }
+  }
+
+  void cleanUp() {
+    _tagColorIndex = 0;
+    _langColorIndex = 0;
+    _verdictColorIndex = 0;
+    tags.clear();
+    langs.clear();
+    verdicts.clear();
+    top10Langs.clear();
+    top10Tags.clear();
+    top10Verdicts.clear();
+    _problemNames.clear();
+  }
+
   Future<void> pullDataFromCF() async {
+    cleanUp();
     String url =
         "https://codeforces.com/api/user.status?handle=${_handel.data}";
     http.Response response = await http.get(url);
     _results = json.decode(response.body);
     pullTags();
     pullLangs();
+    pullVerdicts();
 
     notifyListeners();
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_design/screens/tag_screen.dart';
 import 'package:my_design/screens/languages_screen.dart';
+import 'package:my_design/screens/verdicts_screen.dart';
 
 List<Tab> tabList = [
   Tab(
@@ -9,6 +10,9 @@ List<Tab> tabList = [
   Tab(
     child: Text("Languages"),
   ),
+  Tab(
+    child: Text("Verdicts"),
+  ),
 ];
 
 class MyTabs extends StatelessWidget {
@@ -16,7 +20,7 @@ class MyTabs extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: DefaultTabController(
-        length: 2,
+        length: 3,
         child: Scaffold(
           appBar: AppBar(
             automaticallyImplyLeading: false,
@@ -28,6 +32,7 @@ class MyTabs extends StatelessWidget {
             children: [
               TagScreen(),
               LanguageScreen(),
+              VerdictScreen(),
             ],
           ),
         ),
