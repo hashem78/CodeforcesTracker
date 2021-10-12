@@ -6,12 +6,11 @@ class ChartStack extends StatelessWidget {
   //this should come from a list.generate
   final List<PieChartSectionData> sections;
   final CircularListView circularListView;
-  ChartStack({@required this.sections, @required this.circularListView});
+  ChartStack({required this.sections, required this.circularListView});
   @override
   Widget build(BuildContext context) {
     return Stack(
-      fit: StackFit.expand,
-      overflow: Overflow.clip,
+      clipBehavior: Clip.hardEdge, fit: StackFit.expand,
       children: <Widget>[
         PieChart(
           PieChartData(

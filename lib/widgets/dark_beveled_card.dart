@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class DarkBeveledCard extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final int index;
+  final String? title;
+  final String? subtitle;
+  final int? index;
   DarkBeveledCard({this.title, this.subtitle, this.index});
   @override
   Widget build(BuildContext context) {
@@ -19,10 +19,10 @@ class DarkBeveledCard extends StatelessWidget {
           ),
         ),
         title: Text(
-          title,
+          title!,
         ),
         subtitle: Text(
-          subtitle,
+          subtitle!,
         ),
       ),
     );

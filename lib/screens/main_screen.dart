@@ -27,7 +27,7 @@ SnackBar errorSnackBar = SnackBar(
   content: ListTile(
     leading: Icon(
       Icons.error,
-      color: Colors.red, 
+      color: Colors.red,
     ),
     title: Text(
       kERROR_HANDEL_DNE_TEXT,
@@ -84,15 +84,15 @@ class MainScreen extends StatelessWidget {
                   ),
                 ),
                 Builder(
-                  builder: (innerContext) => RaisedButton(
+                  builder: (innerContext) => ElevatedButton(
                     child: Text(kHANDEL_TRACK_BUTTON_TEXT),
                     onPressed: () async {
-                      Scaffold.of(innerContext).showSnackBar(workingSnackBar);
+                      ScaffoldMessenger.maybeOf(innerContext)?.showSnackBar(workingSnackBar);
                       String url =
                           "https://codeforces.com/api/user.status?handle=${myController.text}&count=1";
-                      http.Response valid = await http.get(url);
-                      if (valid == null || valid.statusCode != 200) {
-                        Scaffold.of(innerContext).showSnackBar(errorSnackBar);
+                      http.Response valid = await http.get(Uri.parse(url));
+                      if ( valid.statusCode != 200) {
+                      ScaffoldMessenger.maybeOf(innerContext)?.showSnackBar(errorSnackBar);
                       } else {
                         Provider.of<Data>(context, listen: false)
                             .updateHandle(myController.text);

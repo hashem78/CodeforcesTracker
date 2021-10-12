@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class CircularListView extends StatelessWidget {
   final ScrollController _scrollController = ScrollController();
-  final int itemCount;
-  final Function itemBuilder;
+  final int? itemCount;
+  final Function? itemBuilder;
   CircularListView({this.itemCount,this.itemBuilder});
   
 
@@ -16,7 +16,7 @@ class CircularListView extends StatelessWidget {
         controller: _scrollController,
         scrollDirection: Axis.horizontal,
         itemCount: itemCount,
-        itemBuilder: itemBuilder,
+        itemBuilder: itemBuilder as Widget Function(BuildContext, int),
       ),
     );
   }

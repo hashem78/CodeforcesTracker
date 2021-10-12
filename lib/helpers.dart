@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class ColorTag {
-  Color color;
-  int reps;
+  Color? color;
+  int? reps;
   ColorTag({this.color, this.reps});
 }
 

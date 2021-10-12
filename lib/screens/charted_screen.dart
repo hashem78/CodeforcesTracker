@@ -8,7 +8,7 @@ class ChartedScreen extends StatelessWidget {
   final dynamic data;
   final dynamic top10data;
 
-  ChartedScreen({@required this.data, @required this.top10data});
+  ChartedScreen({required this.data, required this.top10data});
 
   @override
   Widget build(BuildContext context) {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class TagTile extends StatelessWidget {
-  final Color color;
-  final String text;
+  final Color? color;
+  final String? text;
   TagTile({this.color, this.text});
   @override
   Widget build(BuildContext context) {
@@ -19,7 +19,7 @@ class TagTile extends StatelessWidget {
             width: 5,
           ),
           Text(
-            text,
+            text!,
             style: TextStyle(color: color,fontWeight: FontWeight.bold),
 
           ),
