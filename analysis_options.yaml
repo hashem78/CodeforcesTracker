@@ -1,0 +1,11 @@
+include: package:flutter_lints/flutter.yaml
+
+linter:
+
+  rules:
+    avoid_print: false  
+    prefer_single_quotes: true
+    sized_box_for_whitespace: true
+    non_constant_identifier_names: false
+
+
