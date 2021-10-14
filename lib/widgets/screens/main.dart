@@ -135,6 +135,11 @@ class _LatestSubmissionsTabState extends State<LatestSubmissionsTab>
           ),
         );
       },
+      error: (String? error) {
+        return const Center(
+          child: Text('Error'),
+        );
+      },
     );
   }
 
