@@ -1,5 +1,7 @@
 import 'package:code_forces_tracker/models/cfsubmissions.dart';
 import 'package:code_forces_tracker/models/thememode.dart';
+import 'package:code_forces_tracker/notifiers/cflanguages.dart';
+import 'package:code_forces_tracker/notifiers/languages.dart';
 import 'package:code_forces_tracker/notifiers/submissions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -41,3 +43,9 @@ final themeModeProvider =
   },
 );
 
+final languagesProvider =
+    StateNotifierProvider.autoDispose<CFLanguagesNotifier, CFLanguages>(
+  (ref) {
+    return CFLanguagesNotifier('hashalayan');
+  },
+);

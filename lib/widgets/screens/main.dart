@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({
@@ -37,10 +38,80 @@ class MainScreen extends StatelessWidget {
         body: const TabBarView(
           children: [
             LatestSubmissionsTab(),
-            SizedBox(),
+            LanguagesTab(),
           ],
         ),
       ),
+    );
+  }
+}
+
+class LanguagesTab extends StatefulHookWidget {
+  const LanguagesTab({Key? key}) : super(key: key);
+
+  @override
+  State<LanguagesTab> createState() => _LanguagesTabState();
+}
+
+class _LanguagesTabState extends State<LanguagesTab> {
+  @override
+  void didChangeDependencies() {
+    context.read(languagesProvider.notifier).fetchData();
+    super.didChangeDependencies();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final data = useProvider(languagesProvider);
+    final touchedIndex = useValueNotifier(-1);
+    return data.when(
+      loading: () {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+      data: (data) {
+        return ValueListenableBuilder<int>(
+          valueListenable: touchedIndex,
+          builder: (context, idx, child) {
+            final isTouched = idx != -1;
+            List<PieChartSectionData>? copy;
+            if (isTouched) {
+              copy = [...data];
+              copy[idx] = copy[idx].copyWith(
+                radius: 170,
+                titleStyle: const TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                ),
+              );
+            }
+            return PieChart(
+              PieChartData(
+                centerSpaceRadius: 0,
+                sections: isTouched ? copy : data,
+                pieTouchData: PieTouchData(
+                  touchCallback: (event, pieTouchResponse) {
+                    if (!event.isInterestedForInteractions ||
+                        pieTouchResponse == null ||
+                        pieTouchResponse.touchedSection == null) {
+                      touchedIndex.value = -1;
+                    } else {
+                      touchedIndex.value =
+                          pieTouchResponse.touchedSection!.touchedSectionIndex;
+                    }
+                  },
+                ),
+              ),
+            );
+          },
+        );
+      },
+      error: (error) {
+        return const Center(
+          child: Text('An Error Occured'),
+        );
+      },
     );
   }
 }
