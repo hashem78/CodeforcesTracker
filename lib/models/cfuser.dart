@@ -21,7 +21,7 @@ abstract class CFUser with _$CFUser {
     String maxRank,
     int maxRating,
     int lastOnlineTimeSeconds,
-    int registrationTimeSeconds	,
+    int registrationTimeSeconds,
     int friendOfCount,
     String avatar,
     String titlePhoto,

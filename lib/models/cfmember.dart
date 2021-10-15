@@ -1,4 +1,3 @@
-
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'cfmember.freezed.dart';
@@ -10,7 +9,7 @@ abstract class CFMember with _$CFMember {
     String handle,
     String? name,
   ) = _CFMember;
-	
+
   factory CFMember.fromJson(Map<String, dynamic> json) =>
-			_$CFMemberFromJson(json);
+      _$CFMemberFromJson(json);
 }

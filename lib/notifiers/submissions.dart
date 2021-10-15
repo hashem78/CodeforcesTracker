@@ -27,7 +27,7 @@ class SubmissionsNotifier extends StateNotifier<CFSubmissions> {
         from: from,
         count: count,
       );
-      
+
       state = CFSubmissions.data(
         submissions: submissions.item1,
         nextFrom: from + count,

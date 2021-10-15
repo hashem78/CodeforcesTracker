@@ -10,13 +10,10 @@ class CFStatisticsNotifier extends StateNotifier<CFStatisticsState> {
   final CFRepository repository;
   void fetchData() {
     state = const CFStatisticsState.loading();
-    repository.getStatistics().then(
-      (value) {
-        state = CFStatisticsState.data(data: value);
-      },
-      onError: (err){
-        throw Exception('An error occured');
-      }
-    );
+    repository.getStatistics().then((value) {
+      state = CFStatisticsState.data(data: value);
+    }, onError: (err) {
+      throw Exception('An error occured');
+    });
   }
 }

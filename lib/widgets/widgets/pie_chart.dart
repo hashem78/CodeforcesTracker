@@ -27,7 +27,8 @@ class CFPieChart extends StatefulWidget {
   State<CFPieChart> createState() => _CFPieChartState();
 }
 
-class _CFPieChartState extends State<CFPieChart> with AutomaticKeepAliveClientMixin {
+class _CFPieChartState extends State<CFPieChart>
+    with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     super.build(context);
