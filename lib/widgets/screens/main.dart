@@ -1,6 +1,7 @@
 import 'package:code_forces_tracker/models/cfsubmission.dart';
 import 'package:code_forces_tracker/providers.dart';
 import 'package:code_forces_tracker/remote.dart';
+import 'package:code_forces_tracker/widgets/widgets/pie_chart.dart';
 import 'package:code_forces_tracker/widgets/widgets/tab_bar_heading.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -8,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:fl_chart/fl_chart.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({
@@ -38,7 +38,7 @@ class MainScreen extends StatelessWidget {
         body: const TabBarView(
           children: [
             LatestSubmissionsTab(),
-            LanguagesTab(),
+            StatisticsTab(),
           ],
         ),
       ),
@@ -46,14 +46,15 @@ class MainScreen extends StatelessWidget {
   }
 }
 
-class LanguagesTab extends StatefulHookWidget {
-  const LanguagesTab({Key? key}) : super(key: key);
+class StatisticsTab extends StatefulHookWidget {
+  const StatisticsTab({Key? key}) : super(key: key);
 
   @override
-  State<LanguagesTab> createState() => _LanguagesTabState();
+  State<StatisticsTab> createState() => _LanguagesTabState();
 }
 
-class _LanguagesTabState extends State<LanguagesTab> {
+class _LanguagesTabState extends State<StatisticsTab>
+    with AutomaticKeepAliveClientMixin {
   @override
   void didChangeDependencies() {
     context.read(languagesProvider.notifier).fetchData();
@@ -62,8 +63,8 @@ class _LanguagesTabState extends State<LanguagesTab> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final data = useProvider(languagesProvider);
-    final touchedIndex = useValueNotifier(-1);
     return data.when(
       loading: () {
         return const Center(
@@ -71,40 +72,31 @@ class _LanguagesTabState extends State<LanguagesTab> {
         );
       },
       data: (data) {
-        return ValueListenableBuilder<int>(
-          valueListenable: touchedIndex,
-          builder: (context, idx, child) {
-            final isTouched = idx != -1;
-            List<PieChartSectionData>? copy;
-            if (isTouched) {
-              copy = [...data];
-              copy[idx] = copy[idx].copyWith(
-                radius: 170,
-                titleStyle: const TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
-                ),
-              );
-            }
-            return PieChart(
-              PieChartData(
-                centerSpaceRadius: 0,
-                sections: isTouched ? copy : data,
-                pieTouchData: PieTouchData(
-                  touchCallback: (event, pieTouchResponse) {
-                    if (!event.isInterestedForInteractions ||
-                        pieTouchResponse == null ||
-                        pieTouchResponse.touchedSection == null) {
-                      touchedIndex.value = -1;
-                    } else {
-                      touchedIndex.value =
-                          pieTouchResponse.touchedSection!.touchedSectionIndex;
-                    }
-                  },
-                ),
-              ),
-            );
+        return RefreshIndicator(
+          onRefresh: () async {
+            context.read(languagesProvider.notifier).fetchData();
           },
+          child: Scrollbar(
+            isAlwaysShown: true,
+            child: PageView(
+              scrollDirection: Axis.vertical,
+              children: [
+                CFPieChart(
+                  key: const Key('languages'),
+                  chartTitle: 'Languages',
+                  languagesData: data.item1,
+                  id: 'l',
+                ),
+                CFPieChart(
+                  key: const Key('verdicts'),
+                  verdictsData: data.item2,
+                  chartTitle: 'Verdicts',
+                  id: 'v',
+                ),
+              ],
+              restorationId: 'a',
+            ),
+          ),
         );
       },
       error: (error) {
@@ -114,6 +106,9 @@ class _LanguagesTabState extends State<LanguagesTab> {
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class LatestSubmissionsTab extends StatefulHookWidget {

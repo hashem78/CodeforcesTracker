@@ -18,7 +18,7 @@ class TabBarHeading extends StatelessWidget {
           const SizedBox(
             width: 10,
           ),
-          Text(title),
+          Expanded(child: Text(title)),
         ],
       ),
     );

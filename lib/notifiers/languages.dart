@@ -1,18 +1,18 @@
-import 'package:code_forces_tracker/notifiers/cflanguages.dart';
+import 'package:code_forces_tracker/models/cfstatisticsstate.dart';
 import 'package:code_forces_tracker/remote.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CFLanguagesNotifier extends StateNotifier<CFLanguages> {
-  CFLanguagesNotifier(String handle)
+class CFStatisticsNotifier extends StateNotifier<CFStatisticsState> {
+  CFStatisticsNotifier(String handle)
       : repository = CFRepository(handle: handle),
-        super(const CFLanguages.loading());
+        super(const CFStatisticsState.loading());
 
   final CFRepository repository;
   void fetchData() {
-    state = const CFLanguages.loading();
-    repository.getLanguages().then(
+    state = const CFStatisticsState.loading();
+    repository.getStatistics().then(
       (value) {
-        state = CFLanguages.data(data: value);
+        state = CFStatisticsState.data(data: value);
       },
       onError: (err){
         throw Exception('An error occured');

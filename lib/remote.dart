@@ -1,17 +1,19 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:isolate';
-import 'dart:math';
 
-import 'package:code_forces_tracker/models/cfsubmission.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/material.dart';
+import 'package:code_forces_tracker/models/cflanguagedata.dart';
+import 'package:code_forces_tracker/models/cfverdictsdata.dart';
 import 'package:http/http.dart' as http;
 import 'package:tuple/tuple.dart';
+
+import 'package:code_forces_tracker/models/cfsubmission.dart';
 
 enum GetUserState { filtering, normal, none }
 
 typedef UsersStatusType = Tuple2<List<CFSubmission>, GetUserState>;
+
+typedef StatisticsType = Tuple2<List<CFLanguageData>, List<CFVerdictsData>>;
 
 class CFRepository {
   final String handle;
@@ -75,21 +77,23 @@ class CFRepository {
     }
   }
 
-  Future<List<PieChartSectionData>> getLanguages() async {
+  Future<StatisticsType> getStatistics() async {
     final port = ReceivePort();
 
     final isolate = await Isolate.spawn<List>(
-      _getLanguages,
+      _getStatistics,
       [port.sendPort, 'hashalayan'],
     );
-    final completer = Completer<List<PieChartSectionData>>();
-    port.listen((message) {
-      if (message is List<PieChartSectionData>) {
-        completer.complete(message);
-        port.close();
-        isolate.kill();
-      }
-    });
+    final completer = Completer<StatisticsType>();
+    port.listen(
+      (message) {
+        if (message is StatisticsType) {
+          completer.complete(message);
+          port.close();
+          isolate.kill();
+        }
+      },
+    );
     return completer.future;
   }
 
@@ -110,12 +114,11 @@ class CFRepository {
     return submissions;
   }
 
-  static Future<void> _getLanguages(List message) async {
-    final port = message[0] as SendPort;
-    final handle = message[1] as String;
-    final submissions = await _getAllSubmissions(handle);
+  static List<CFLanguageData> _getLanguagesData(
+    List<CFSubmission> submissions,
+  ) {
     final languages = <String, int>{};
-    final chartData = <PieChartSectionData>[];
+    final languagesChartData = <CFLanguageData>[];
     for (final submission in submissions) {
       if (!languages.containsKey(submission.programmingLanguage)) {
         languages[submission.programmingLanguage] = 1;
@@ -133,21 +136,55 @@ class CFRepository {
     }
 
     for (final entry in languages.entries) {
-      chartData.add(
-        PieChartSectionData(
-          value: entry.value.toDouble(),
-          title: entry.key,
-          radius: 160,
-          color: Colors.primaries[Random().nextInt(Colors.primaries.length)],
-          showTitle: mx.key == entry.key,
-          titleStyle: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+      languagesChartData.add(
+        CFLanguageData(
+          entry.key,
+          entry.value,
         ),
       );
     }
+    return languagesChartData;
+  }
 
-    port.send(chartData);
+  static List<CFVerdictsData> _getVerdictsData(
+    List<CFSubmission> submissions,
+  ) {
+    final verdicts = <CFSubmissionVerdict, int>{};
+    final verdictsCharData = <CFVerdictsData>[];
+    for (final submission in submissions) {
+      if (!verdicts.containsKey(submission.verdict) &&
+          submission.verdict != null) {
+        verdicts[submission.verdict!] = 1;
+      } else {
+        verdicts[submission.verdict!] = verdicts[submission.verdict]! + 1;
+      }
+    }
+    final entriesList = verdicts.entries.toList();
+    MapEntry<CFSubmissionVerdict, int> mx = entriesList.first;
+    for (int i = 1; i < entriesList.length; ++i) {
+      if (entriesList[i].value > mx.value) {
+        mx = entriesList[i];
+      }
+    }
+
+    for (final entry in verdicts.entries) {
+      verdictsCharData.add(
+        CFVerdictsData(
+          entry.key,
+          entry.value,
+        ),
+      );
+    }
+    return verdictsCharData;
+  }
+
+  static Future<void> _getStatistics(List message) async {
+    final port = message[0] as SendPort;
+    final handle = message[1] as String;
+    final submissions = await _getAllSubmissions(handle);
+    final languagesData = _getLanguagesData(submissions);
+    final verdictsData = _getVerdictsData(submissions);
+
+    port.send(Tuple2(languagesData, verdictsData));
   }
 }

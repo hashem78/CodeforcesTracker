@@ -1,6 +1,6 @@
+import 'package:code_forces_tracker/models/cfstatisticsstate.dart';
 import 'package:code_forces_tracker/models/cfsubmissions.dart';
 import 'package:code_forces_tracker/models/thememode.dart';
-import 'package:code_forces_tracker/notifiers/cflanguages.dart';
 import 'package:code_forces_tracker/notifiers/languages.dart';
 import 'package:code_forces_tracker/notifiers/submissions.dart';
 import 'package:flutter/material.dart';
@@ -44,8 +44,8 @@ final themeModeProvider =
 );
 
 final languagesProvider =
-    StateNotifierProvider.autoDispose<CFLanguagesNotifier, CFLanguages>(
+    StateNotifierProvider.autoDispose<CFStatisticsNotifier, CFStatisticsState>(
   (ref) {
-    return CFLanguagesNotifier('hashalayan');
+    return CFStatisticsNotifier('hashalayan');
   },
 );
