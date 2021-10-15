@@ -1,4 +1,5 @@
 import 'package:code_forces_tracker/models/cfsubmission.dart';
+
 import 'package:code_forces_tracker/providers.dart';
 import 'package:code_forces_tracker/remote.dart';
 import 'package:code_forces_tracker/widgets/widgets/pie_chart.dart';
@@ -22,6 +23,46 @@ class MainScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('CodeForces Tracker'),
+          actions: [
+            Consumer(
+              builder: (context, watch, _) {
+                IconData? icon;
+                final themeMode = watch(themeModeProvider);
+                if (themeMode == ThemeMode.system) {
+                  final currentBrightness =
+                      MediaQuery.of(context).platformBrightness;
+                  if (currentBrightness == Brightness.dark) {
+                    icon = Icons.wb_sunny;
+                  } else {
+                    icon = Icons.wb_cloudy;
+                  }
+                } else if (themeMode == ThemeMode.dark) {
+                  icon = Icons.wb_sunny;
+                } else {
+                  icon = Icons.wb_cloudy;
+                }
+                return IconButton(
+                  onPressed: () {
+                    final notifier = context.read(themeModeProvider.notifier);
+                    if (themeMode == ThemeMode.system) {
+                      final currentBrightness =
+                          MediaQuery.of(context).platformBrightness;
+                      if (currentBrightness == Brightness.dark) {
+                        notifier.set(ThemeMode.light);
+                      } else {
+                        notifier.set(ThemeMode.dark);
+                      }
+                    } else if (themeMode == ThemeMode.dark) {
+                      notifier.set(ThemeMode.light);
+                    } else {
+                      notifier.set(ThemeMode.dark);
+                    }
+                  },
+                  icon: Icon(icon),
+                );
+              },
+            ),
+          ],
           bottom: const TabBar(
             tabs: [
               TabBarHeading(

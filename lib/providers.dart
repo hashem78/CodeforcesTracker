@@ -1,11 +1,15 @@
 import 'package:code_forces_tracker/models/cfstatisticsstate.dart';
 import 'package:code_forces_tracker/models/cfsubmissions.dart';
-import 'package:code_forces_tracker/models/thememode.dart';
 import 'package:code_forces_tracker/notifiers/languages.dart';
 import 'package:code_forces_tracker/notifiers/submissions.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+final prefsProvider = Provider<SharedPreferences>((ref) {
+  throw Exception('Provider was not initialized');
+});
 
 final submissionsProvider = StateNotifierProvider.autoDispose
     .family<SubmissionsNotifier, CFSubmissions, String>(
@@ -17,29 +21,44 @@ final submissionsProvider = StateNotifierProvider.autoDispose
   },
 );
 
-final themeModeProvider =
-    FutureProvider.autoDispose.family<ThemeMode, ThemeModeUseCase>(
-  (ref, usecase) async {
-    final prefs = await SharedPreferences.getInstance();
-    if (usecase is ThemeModeLoad) {
-      late ThemeMode state;
-      if (prefs.containsKey('themeMode')) {
-        final mode = prefs.getString('themeMode')!;
-        for (final val in ThemeMode.values) {
-          if (mode == val.toString()) {
-            state = val;
-          }
-        }
-      } else {
-        state = ThemeMode.system;
-        prefs.setString('themeMode', ThemeMode.system.toString());
-      }
-      return state;
+class ThemeModeNotifier extends StateNotifier<ThemeMode> {
+  ThemeModeNotifier({
+    required this.ref,
+  }) : super(ThemeMode.system);
+  final ProviderReference ref;
+  void set(ThemeMode mode) {
+    final prefs = ref.read(prefsProvider);
+    print(mode);
+    state = mode;
+    prefs.setString('themeModex', EnumToString.convertToString(mode));
+  }
+
+  Future<void> load() async {
+    final prefs = ref.read(prefsProvider);
+    if (prefs.containsKey('themeModex')) {
+      set(
+        EnumToString.fromString(
+          ThemeMode.values,
+          prefs.getString(
+            'themeModex',
+          )!,
+        )!,
+      );
     } else {
-      final casted = usecase as ThemeModeSet;
-      prefs.setString('themeMode', casted.themeMode.toString());
-      return casted.themeMode;
+      prefs.setString(
+        'themeModex',
+        EnumToString.convertToString(ThemeMode.system),
+      );
     }
+  }
+}
+
+final themeModeProvider =
+    StateNotifierProvider.autoDispose<ThemeModeNotifier, ThemeMode>(
+  (ref) {
+    return ThemeModeNotifier(
+      ref: ref,
+    )..load();
   },
 );
 
