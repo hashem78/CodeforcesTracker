@@ -60,7 +60,12 @@ class _CFPieChartState extends State<CFPieChart>
         charts.DatumLegend(
           position: charts.BehaviorPosition.bottom,
         ),
-        charts.ChartTitle(widget.chartTitle),
+        charts.ChartTitle(
+          widget.chartTitle,
+          titleStyleSpec: const charts.TextStyleSpec(
+            color: charts.Color.black,
+          ),
+        ),
       ],
     );
   }

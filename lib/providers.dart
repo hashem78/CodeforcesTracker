@@ -54,7 +54,7 @@ class ThemeModeNotifier extends StateNotifier<ThemeMode> {
 }
 
 final themeModeProvider =
-    StateNotifierProvider.autoDispose<ThemeModeNotifier, ThemeMode>(
+    StateNotifierProvider<ThemeModeNotifier, ThemeMode>(
   (ref) {
     return ThemeModeNotifier(
       ref: ref,

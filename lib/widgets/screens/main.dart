@@ -23,45 +23,8 @@ class MainScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('CodeForces Tracker'),
-          actions: [
-            Consumer(
-              builder: (context, watch, _) {
-                IconData? icon;
-                final themeMode = watch(themeModeProvider);
-                if (themeMode == ThemeMode.system) {
-                  final currentBrightness =
-                      MediaQuery.of(context).platformBrightness;
-                  if (currentBrightness == Brightness.dark) {
-                    icon = Icons.wb_sunny;
-                  } else {
-                    icon = Icons.wb_cloudy;
-                  }
-                } else if (themeMode == ThemeMode.dark) {
-                  icon = Icons.wb_sunny;
-                } else {
-                  icon = Icons.wb_cloudy;
-                }
-                return IconButton(
-                  onPressed: () {
-                    final notifier = context.read(themeModeProvider.notifier);
-                    if (themeMode == ThemeMode.system) {
-                      final currentBrightness =
-                          MediaQuery.of(context).platformBrightness;
-                      if (currentBrightness == Brightness.dark) {
-                        notifier.set(ThemeMode.light);
-                      } else {
-                        notifier.set(ThemeMode.dark);
-                      }
-                    } else if (themeMode == ThemeMode.dark) {
-                      notifier.set(ThemeMode.light);
-                    } else {
-                      notifier.set(ThemeMode.dark);
-                    }
-                  },
-                  icon: Icon(icon),
-                );
-              },
-            ),
+          actions: const [
+            ThemeModeActionButton(),
           ],
           bottom: const TabBar(
             tabs: [
@@ -83,6 +46,79 @@ class MainScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class ThemeModeActionButton extends HookWidget {
+  const ThemeModeActionButton({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final themeMode = useProvider(themeModeProvider);
+    IconData? icon;
+    if (themeMode == ThemeMode.system) {
+      final currentBrightness = MediaQuery.of(context).platformBrightness;
+      if (currentBrightness == Brightness.dark) {
+        icon = Icons.wb_sunny;
+      } else {
+        icon = Icons.wb_cloudy;
+      }
+    } else if (themeMode == ThemeMode.dark) {
+      icon = Icons.wb_sunny;
+    } else {
+      icon = Icons.wb_cloudy;
+    }
+    return IconButton(
+      icon: Icon(icon),
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            final themeMode = context.read(themeModeProvider);
+            return Dialog(
+              child: ListView(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                children: <Widget>[
+                  RadioListTile<ThemeMode>(
+                    value: ThemeMode.system,
+                    groupValue: themeMode,
+                    title: const Text('System'),
+                    onChanged: (ThemeMode? val) {
+                      context
+                          .read(themeModeProvider.notifier)
+                          .set(ThemeMode.system);
+                    },
+                  ),
+                  RadioListTile<ThemeMode>(
+                    value: ThemeMode.light,
+                    groupValue: themeMode,
+                    title: const Text('Light'),
+                    onChanged: (ThemeMode? val) {
+                      context
+                          .read(themeModeProvider.notifier)
+                          .set(ThemeMode.light);
+                    },
+                  ),
+                  RadioListTile<ThemeMode>(
+                    value: ThemeMode.dark,
+                    groupValue: themeMode,
+                    title: const Text('Dark'),
+                    onChanged: (ThemeMode? val) {
+                      context
+                          .read(themeModeProvider.notifier)
+                          .set(ThemeMode.dark);
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }
@@ -303,3 +339,41 @@ class FilteringWidgetButton extends HookWidget {
     );
   }
 }
+//Consumer(
+//   builder: (context, watch, _) {
+//     IconData? icon;
+//     final themeMode = watch(themeModeProvider);
+//     if (themeMode == ThemeMode.system) {
+//       final currentBrightness =
+//           MediaQuery.of(context).platformBrightness;
+//       if (currentBrightness == Brightness.dark) {
+//         icon = Icons.wb_sunny;
+//       } else {
+//         icon = Icons.wb_cloudy;
+//       }
+//     } else if (themeMode == ThemeMode.dark) {
+//       icon = Icons.wb_sunny;
+//     } else {
+//       icon = Icons.wb_cloudy;
+//     }
+//     return IconButton(
+//       onPressed: () {
+//         final notifier = context.read(themeModeProvider.notifier);
+//         if (themeMode == ThemeMode.system) {
+//           final currentBrightness =
+//               MediaQuery.of(context).platformBrightness;
+//           if (currentBrightness == Brightness.dark) {
+//             notifier.set(ThemeMode.light);
+//           } else {
+//             notifier.set(ThemeMode.dark);
+//           }
+//         } else if (themeMode == ThemeMode.dark) {
+//           notifier.set(ThemeMode.light);
+//         } else {
+//           notifier.set(ThemeMode.dark);
+//         }
+//       },
+//       icon: Icon(icon),
+//     );
+//   },
+// ),
