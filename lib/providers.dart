@@ -7,6 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'models/cfhandle.dart';
+import 'notifiers/handle.dart';
+
 final prefsProvider = Provider<SharedPreferences>((ref) {
   throw Exception('Provider was not initialized');
 });
@@ -53,8 +56,7 @@ class ThemeModeNotifier extends StateNotifier<ThemeMode> {
   }
 }
 
-final themeModeProvider =
-    StateNotifierProvider<ThemeModeNotifier, ThemeMode>(
+final themeModeProvider = StateNotifierProvider<ThemeModeNotifier, ThemeMode>(
   (ref) {
     return ThemeModeNotifier(
       ref: ref,
@@ -62,9 +64,15 @@ final themeModeProvider =
   },
 );
 
-final languagesProvider =
-    StateNotifierProvider.autoDispose<CFStatisticsNotifier, CFStatisticsState>(
+final languagesProvider = StateNotifierProvider.autoDispose
+    .family<CFStatisticsNotifier, CFStatisticsState, String>(
+  (ref, handle) {
+    return CFStatisticsNotifier(handle);
+  },
+);
+final handleProvider =
+    StateNotifierProvider.autoDispose<HandleNotifier, CFHandle>(
   (ref) {
-    return CFStatisticsNotifier('hashalayan');
+    return HandleNotifier();
   },
 );

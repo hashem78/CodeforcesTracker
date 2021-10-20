@@ -82,7 +82,7 @@ class CFRepository {
 
     final isolate = await Isolate.spawn<List>(
       _getStatistics,
-      [port.sendPort, 'hashalayan'],
+      [port.sendPort, handle],
     );
     final completer = Completer<StatisticsType>();
     port.listen(

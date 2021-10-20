@@ -31,7 +31,7 @@ Future<void> main() async {
     ),
   );
 }
-
+final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 class MyApp extends HookWidget {
   const MyApp({
     Key? key,
@@ -43,6 +43,7 @@ class MyApp extends HookWidget {
     final themeMode = useProvider(themeModeProvider);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      scaffoldMessengerKey: scaffoldMessengerKey,
       themeMode: themeMode,
       theme: ThemeData(
         brightness: themeMode == ThemeMode.system
