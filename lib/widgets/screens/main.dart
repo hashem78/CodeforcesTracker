@@ -2,6 +2,7 @@ import 'package:code_forces_tracker/models/cfsubmission.dart';
 
 import 'package:code_forces_tracker/providers.dart';
 import 'package:code_forces_tracker/remote.dart';
+import 'package:code_forces_tracker/widgets/widgets/handle_inherited_widget.dart';
 import 'package:code_forces_tracker/widgets/widgets/pie_chart.dart';
 import 'package:code_forces_tracker/widgets/widgets/tab_bar_heading.dart';
 import 'package:enum_to_string/enum_to_string.dart';
@@ -133,15 +134,22 @@ class StatisticsTab extends StatefulHookWidget {
 class _LanguagesTabState extends State<StatisticsTab>
     with AutomaticKeepAliveClientMixin {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   void didChangeDependencies() {
-    context.read(languagesProvider.notifier).fetchData();
+    final handle = HandleInheritedWidget.of(context)!.handle;
+    context.read(languagesProvider(handle).notifier).fetchData();
     super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final data = useProvider(languagesProvider);
+    final handle = HandleInheritedWidget.of(context)!.handle;
+    final data = useProvider(languagesProvider(handle));
     return data.when(
       loading: () {
         return const Center(
@@ -151,7 +159,7 @@ class _LanguagesTabState extends State<StatisticsTab>
       data: (data) {
         return RefreshIndicator(
           onRefresh: () async {
-            context.read(languagesProvider.notifier).fetchData();
+            context.read(languagesProvider(handle).notifier).fetchData();
           },
           child: Scrollbar(
             isAlwaysShown: true,
@@ -200,8 +208,9 @@ class _LatestSubmissionsTabState extends State<LatestSubmissionsTab>
   final pagingController = PagingController<int, CFSubmission>(firstPageKey: 1);
   @override
   void didChangeDependencies() {
+    final handle = HandleInheritedWidget.of(context)!.handle;
     final submissionsNotifier = context.read(
-      submissionsProvider('hashalayan').notifier,
+      submissionsProvider(handle).notifier,
     );
     pagingController.addPageRequestListener(
       (pageKey) {
@@ -215,7 +224,8 @@ class _LatestSubmissionsTabState extends State<LatestSubmissionsTab>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final submissions = useProvider(submissionsProvider('hashalayan'));
+    final handle = HandleInheritedWidget.of(context)!.handle;
+    final submissions = useProvider(submissionsProvider(handle));
 
     return submissions.when(
       initial: () {
@@ -255,7 +265,7 @@ class _LatestSubmissionsTabState extends State<LatestSubmissionsTab>
                     ).toList(),
                   ),
                 ),
-              ),
+              ),  
               PagedSliverList(
                 pagingController: pagingController,
                 builderDelegate: PagedChildBuilderDelegate<CFSubmission>(
