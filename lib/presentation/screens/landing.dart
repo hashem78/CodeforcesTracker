@@ -54,6 +54,14 @@ class LandingScreen extends HookConsumerWidget {
     }
 
     return Scaffold(
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () => context.router.push(const SettingsRoute()),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: FormBuilder(
           key: formKey,

@@ -21,6 +21,14 @@
     "error": "An Error Occurred",
     "errorDetails": "Error: $error"
   },
+  "settings": {
+    "title": "Settings",
+    "theme": "Theme",
+    "language": "Language",
+    "languageNames": {
+      "en": "English"
+    }
+  },
   "theme": {
     "system": "System",
     "light": "Light",

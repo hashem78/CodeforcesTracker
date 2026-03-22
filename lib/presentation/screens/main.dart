@@ -1,9 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:code_forces_tracker/providers/locale.dart';
+import 'package:code_forces_tracker/router.dart';
 import 'package:code_forces_tracker/presentation/widgets/statistics_tab.dart';
 import 'package:code_forces_tracker/presentation/widgets/submissions_tab.dart';
 import 'package:code_forces_tracker/presentation/widgets/tab_bar_heading.dart';
-import 'package:code_forces_tracker/presentation/widgets/theme_mode_button.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -20,7 +20,12 @@ class MainScreen extends ConsumerWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text(t.appTitle),
-          actions: const [ThemeModeActionButton()],
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.settings),
+              onPressed: () => context.router.push(const SettingsRoute()),
+            ),
+          ],
           bottom: TabBar(
             tabs: [
               TabBarHeading(iconData: Icons.mail, title: t.main.submissions),
