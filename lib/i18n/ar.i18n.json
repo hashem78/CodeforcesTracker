@@ -18,6 +18,9 @@
     "statistics": "الإحصائيات",
     "verdict": "الحكم: $verdict",
     "verdictUnavailable": "الحكم: غير متوفر",
+    "contestLabel": "مسابقة #$id",
+    "runtime": "${ms}مل/ث",
+    "memory": "${kb}ك.ب",
     "error": "حدث خطأ",
     "errorDetails": "خطأ: $error"
   },

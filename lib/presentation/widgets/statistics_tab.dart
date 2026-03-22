@@ -11,6 +11,7 @@ class StatisticsTab extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    useAutomaticKeepAlive();
     final pageController = usePageController();
     final asyncData = ref.watch(statisticsProvider(handle));
     final t = ref.watch(localeProvider);

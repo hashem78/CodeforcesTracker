@@ -1,13 +1,10 @@
+import 'package:code_forces_tracker/core/verdict_colors.dart';
 import 'package:code_forces_tracker/models/cfsubmission.dart';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
 
 class VerdictFilterBar extends StatelessWidget {
-  const VerdictFilterBar({
-    super.key,
-    required this.activeFilters,
-    required this.onFiltersChanged,
-  });
+  const VerdictFilterBar({super.key, required this.activeFilters, required this.onFiltersChanged});
 
   final ISet<CFSubmissionVerdict> activeFilters;
   final ValueChanged<ISet<CFSubmissionVerdict>> onFiltersChanged;
@@ -15,30 +12,31 @@ class VerdictFilterBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.width / 7,
-      child: ListView(
+      height: 56,
+      child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        children: CFSubmissionVerdict.values.map<Widget>((verdict) {
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        separatorBuilder: (_, _) => const SizedBox(width: 8),
+        itemCount: CFSubmissionVerdict.values.length,
+        itemBuilder: (context, index) {
+          final verdict = CFSubmissionVerdict.values[index];
           final isActive = activeFilters.contains(verdict);
-          return Padding(
-            padding: const EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0),
-            child: OutlinedButton(
-              onPressed: () {
-                if (isActive) {
-                  onFiltersChanged(activeFilters.remove(verdict));
-                } else {
-                  onFiltersChanged(activeFilters.add(verdict));
-                }
-              },
-              child: Text(
-                verdict.name,
-                style: TextStyle(
-                  color: isActive ? Colors.grey : Colors.blue,
-                ),
-              ),
-            ),
+          final color = verdictColor(verdict);
+          return FilterChip(
+            selected: isActive,
+            label: Text(verdict.name),
+            selectedColor: color.withValues(alpha: 0.25),
+            checkmarkColor: color,
+            side: BorderSide(color: isActive ? color : Colors.grey.shade300),
+            onSelected: (_) {
+              if (isActive) {
+                onFiltersChanged(activeFilters.remove(verdict));
+              } else {
+                onFiltersChanged(activeFilters.add(verdict));
+              }
+            },
           );
-        }).toList(),
+        },
       ),
     );
   }

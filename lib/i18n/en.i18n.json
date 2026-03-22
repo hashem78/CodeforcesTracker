@@ -18,6 +18,9 @@
     "statistics": "Statistics",
     "verdict": "Verdict: $verdict",
     "verdictUnavailable": "Verdict: unavailable",
+    "contestLabel": "Contest #$id",
+    "runtime": "${ms}ms",
+    "memory": "${kb}KB",
     "error": "An Error Occurred",
     "errorDetails": "Error: $error"
   },
