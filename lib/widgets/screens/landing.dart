@@ -1,11 +1,13 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:code_forces_tracker/main.dart';
 import 'package:code_forces_tracker/models/cfhandle.dart';
 import 'package:code_forces_tracker/notifiers/handle.dart';
-import 'package:code_forces_tracker/widgets/screens/main.dart';
+import 'package:code_forces_tracker/router.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+@RoutePage()
 class LandingScreen extends HookConsumerWidget {
   const LandingScreen({super.key});
 
@@ -37,14 +39,7 @@ class LandingScreen extends HookConsumerWidget {
           );
         case CFHandleData(:final handle):
           scaffoldMessengerKey.currentState!.hideCurrentSnackBar();
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) {
-                return MainScreen(handle: handle);
-              },
-            ),
-          );
+          context.router.push(MainRoute(handle: handle));
         case _:
           break;
       }

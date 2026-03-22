@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:code_forces_tracker/models/cfsubmission.dart';
 import 'package:code_forces_tracker/notifiers/languages.dart';
 import 'package:code_forces_tracker/remote.dart';
@@ -12,8 +13,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+@RoutePage()
 class MainScreen extends StatelessWidget {
-  const MainScreen({super.key, required this.handle});
+  const MainScreen({super.key, @PathParam('handle') required this.handle});
   final String handle;
 
   @override

@@ -1,6 +1,7 @@
-import 'package:code_forces_tracker/widgets/screens/landing.dart';
-import 'package:flutter/material.dart';
 import 'dart:ui';
+
+import 'package:code_forces_tracker/router.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -17,19 +18,26 @@ Future<void> main() async {
   );
   final prefrences = await SharedPreferences.getInstance();
 
-  runApp(ProviderScope(overrides: [prefsProvider.overrideWithValue(prefrences)], child: const MyApp()));
+  runApp(
+    ProviderScope(
+      overrides: [prefsProvider.overrideWithValue(prefrences)],
+      child: MyApp(),
+    ),
+  );
 }
 
 final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 class MyApp extends ConsumerWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+
+  final _appRouter = AppRouter();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     final themeMode = ref.watch(themeModeProvider);
-    return MaterialApp(
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       scaffoldMessengerKey: scaffoldMessengerKey,
       themeMode: themeMode,
@@ -40,7 +48,7 @@ class MyApp extends ConsumerWidget {
             ? Brightness.dark
             : Brightness.light,
       ),
-      home: const LandingScreen(),
+      routerConfig: _appRouter.config(),
     );
   }
 }

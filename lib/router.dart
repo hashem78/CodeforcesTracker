@@ -1,0 +1,15 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:flutter/material.dart';
+import 'package:code_forces_tracker/widgets/screens/landing.dart';
+import 'package:code_forces_tracker/widgets/screens/main.dart';
+
+part 'router.gr.dart';
+
+@AutoRouterConfig()
+class AppRouter extends RootStackRouter {
+  @override
+  List<AutoRoute> get routes => [
+        AutoRoute(page: LandingRoute.page, initial: true),
+        AutoRoute(page: MainRoute.page),
+      ];
+}
