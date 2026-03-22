@@ -1,0 +1,33 @@
+{
+  "appTitle": "CodeForces Tracker",
+  "landing": {
+    "handleLabel": "Codeforces Handle",
+    "handleHint": "Enter your handle",
+    "track": "Track",
+    "validation": {
+      "required": "Handle is required",
+      "minLength": "Handle must be at least 3 characters",
+      "maxLength": "Handle must be at most 24 characters",
+      "invalidChars": "Only letters, numbers, dots, hyphens and underscores",
+      "notFound": "Handle not found on Codeforces"
+    },
+    "error": "An error occurred, please try again later."
+  },
+  "main": {
+    "submissions": "Submissions",
+    "statistics": "Statistics",
+    "verdict": "Verdict: $verdict",
+    "verdictUnavailable": "Verdict: unavailable",
+    "error": "An Error Occurred",
+    "errorDetails": "Error: $error"
+  },
+  "theme": {
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "charts": {
+    "languages": "Languages",
+    "verdicts": "Verdicts"
+  }
+}

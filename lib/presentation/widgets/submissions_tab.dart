@@ -1,5 +1,6 @@
 import 'package:code_forces_tracker/hooks/use_paging_controller.dart';
 import 'package:code_forces_tracker/models/cfsubmission.dart';
+import 'package:code_forces_tracker/providers/locale.dart';
 import 'package:code_forces_tracker/providers/repository.dart';
 import 'package:code_forces_tracker/remote.dart';
 import 'package:code_forces_tracker/presentation/widgets/verdict_filter_bar.dart';
@@ -17,6 +18,7 @@ class LatestSubmissionsTab extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final repository = ref.watch(cfRepositoryProvider(handle));
+    final t = ref.watch(localeProvider);
     final activeFilters = useState(const ISet<CFSubmissionVerdict>.empty());
 
     final paging = usePagingController<CFSubmission>(
@@ -60,7 +62,9 @@ class LatestSubmissionsTab extends HookConsumerWidget {
                     }
                   },
                   subtitle: Text(
-                    'Verdict: ${item.verdict?.name ?? 'unavailable'}',
+                    item.verdict != null
+                        ? t.main.verdict(verdict: item.verdict!.name)
+                        : t.main.verdictUnavailable,
                   ),
                 );
               },

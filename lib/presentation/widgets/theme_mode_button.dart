@@ -1,3 +1,4 @@
+import 'package:code_forces_tracker/providers/locale.dart';
 import 'package:code_forces_tracker/providers/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -8,6 +9,7 @@ class ThemeModeActionButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
+    final t = ref.watch(localeProvider);
     final icon = switch (themeMode) {
       ThemeMode.system =>
         MediaQuery.of(context).platformBrightness == Brightness.dark
@@ -35,18 +37,18 @@ class ThemeModeActionButton extends ConsumerWidget {
                     child: ListView(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      children: const <Widget>[
+                      children: <Widget>[
                         RadioListTile<ThemeMode>(
                           value: ThemeMode.system,
-                          title: Text('System'),
+                          title: Text(t.theme.system),
                         ),
                         RadioListTile<ThemeMode>(
                           value: ThemeMode.light,
-                          title: Text('Light'),
+                          title: Text(t.theme.light),
                         ),
                         RadioListTile<ThemeMode>(
                           value: ThemeMode.dark,
-                          title: Text('Dark'),
+                          title: Text(t.theme.dark),
                         ),
                       ],
                     ),

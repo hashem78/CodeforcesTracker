@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:code_forces_tracker/main.dart';
 import 'package:code_forces_tracker/providers/handle_validation.dart';
+import 'package:code_forces_tracker/providers/locale.dart';
 import 'package:code_forces_tracker/router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -16,6 +17,7 @@ class LandingScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final formKey = useMemoized(GlobalKey<FormBuilderState>.new);
     final validationState = ref.watch(handleValidatorProvider);
+    final t = ref.watch(localeProvider);
 
     ref.listen(handleValidatorProvider, (prev, next) {
       if (prev is! AsyncLoading) return;
@@ -27,15 +29,15 @@ class LandingScreen extends HookConsumerWidget {
         case AsyncData(value: HandleValidationResult.invalid):
           scaffoldMessengerKey.currentState!.hideCurrentSnackBar();
           formKey.currentState!.fields['handle']!.invalidate(
-            'Handle not found on Codeforces',
+            t.landing.validation.notFound,
           );
         case AsyncError():
           scaffoldMessengerKey.currentState!.hideCurrentSnackBar();
           scaffoldMessengerKey.currentState!.showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: Text(
-                'An error occurred, please try again later.',
-                style: TextStyle(color: Colors.red),
+                t.landing.error,
+                style: const TextStyle(color: Colors.red),
               ),
             ),
           );
@@ -60,31 +62,34 @@ class LandingScreen extends HookConsumerWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(
-                  'CodeForces Tracker',
+                Text(
+                  t.appTitle,
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 60,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 24),
                 FormBuilderTextField(
                   name: 'handle',
                   enabled: !validationState.isLoading,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  decoration: const InputDecoration(
-                    labelText: 'Codeforces Handle',
-                    hintText: 'Enter your handle',
-                    prefixIcon: Icon(Icons.person),
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: t.landing.handleLabel,
+                    hintText: t.landing.handleHint,
+                    prefixIcon: const Icon(Icons.person),
+                    border: const OutlineInputBorder(),
                   ),
                   validator: FormBuilderValidators.compose([
                     FormBuilderValidators.required(),
                     FormBuilderValidators.minLength(3,
-                        errorText: 'Handle must be at least 3 characters'),
+                        errorText: t.landing.validation.minLength),
                     FormBuilderValidators.maxLength(24,
-                        errorText: 'Handle must be at most 24 characters'),
+                        errorText: t.landing.validation.maxLength),
                     FormBuilderValidators.match(
                       RegExp(r'^[a-zA-Z0-9._-]+$'),
-                      errorText: 'Only letters, numbers, dots, hyphens and underscores',
+                      errorText: t.landing.validation.invalidChars,
                     ),
                   ]),
                   onSubmitted: (_) => submit(),
@@ -99,7 +104,7 @@ class LandingScreen extends HookConsumerWidget {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: submit,
-                        child: const Text('Track'),
+                        child: Text(t.landing.track),
                       ),
                     ),
                 },

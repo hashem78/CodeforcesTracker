@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:code_forces_tracker/providers/locale.dart';
 import 'package:code_forces_tracker/router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -40,9 +41,11 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     final themeMode = ref.watch(themeModeProvider);
+    final t = ref.watch(localeProvider);
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       scaffoldMessengerKey: scaffoldMessengerKey,
+      title: t.appTitle,
       themeMode: themeMode,
       theme: ThemeData(
         brightness: themeMode == ThemeMode.system
