@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 
 class TabBarHeading extends StatelessWidget {
-  const TabBarHeading({
-    Key? key,
-    required this.title,
-    required this.iconData,
-  }) : super(key: key);
+  const TabBarHeading({super.key, required this.title, required this.iconData});
   final String title;
   final IconData iconData;
   @override
@@ -15,9 +11,7 @@ class TabBarHeading extends StatelessWidget {
       child: Row(
         children: [
           Icon(iconData),
-          const SizedBox(
-            width: 10,
-          ),
+          const SizedBox(width: 10),
           Expanded(child: Text(title)),
         ],
       ),

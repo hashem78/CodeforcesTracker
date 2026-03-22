@@ -5,22 +5,19 @@ import 'dart:isolate';
 import 'package:code_forces_tracker/models/cflanguagedata.dart';
 import 'package:code_forces_tracker/models/cfverdictsdata.dart';
 import 'package:http/http.dart' as http;
-import 'package:tuple/tuple.dart';
 
 import 'package:code_forces_tracker/models/cfsubmission.dart';
 
 enum GetUserState { filtering, normal, none }
 
-typedef UsersStatusType = Tuple2<List<CFSubmission>, GetUserState>;
+typedef UsersStatusType = (List<CFSubmission>, GetUserState);
 
-typedef StatisticsType = Tuple2<List<CFLanguageData>, List<CFVerdictsData>>;
+typedef StatisticsType = (List<CFLanguageData>, List<CFVerdictsData>);
 
 class CFRepository {
   final String handle;
 
-  CFRepository({
-    required this.handle,
-  }) : _client = http.Client();
+  CFRepository({required this.handle}) : _client = http.Client();
 
   final http.Client _client;
 
@@ -35,6 +32,9 @@ class CFRepository {
       final http.Response response = await _client.get(
         Uri.parse('$_userStatus&from=$from&count=$count'),
       );
+      if (response.statusCode != 200) {
+        throw Exception('API error: ${response.statusCode}');
+      }
       final dynamic decodedResponse = jsonDecode(response.body);
       final String status = decodedResponse['status'];
 
@@ -43,7 +43,7 @@ class CFRepository {
       if (status == 'OK' && response.statusCode == 200) {
         final List<CFSubmission> submissions = [];
         if (decodedResponse['result'].isEmpty) {
-          return const UsersStatusType([], GetUserState.normal);
+          return (const <CFSubmission>[], GetUserState.normal);
         }
         for (final submission in decodedResponse['result']) {
           if (submission['contestId'] != null) {
@@ -60,12 +60,9 @@ class CFRepository {
           }
         }
         if (submissions.isEmpty) {
-          return const UsersStatusType([], GetUserState.filtering);
+          return (const <CFSubmission>[], GetUserState.filtering);
         } else {
-          return UsersStatusType(
-            submissions,
-            GetUserState.none,
-          );
+          return (submissions, GetUserState.none);
         }
       } else {
         throw Exception('Failed while fetching submissions');
@@ -80,20 +77,18 @@ class CFRepository {
   Future<StatisticsType> getStatistics() async {
     final port = ReceivePort();
 
-    final isolate = await Isolate.spawn<List>(
-      _getStatistics,
-      [port.sendPort, handle],
-    );
+    final isolate = await Isolate.spawn<List>(_getStatistics, [
+      port.sendPort,
+      handle,
+    ]);
     final completer = Completer<StatisticsType>();
-    port.listen(
-      (message) {
-        if (message is StatisticsType) {
-          completer.complete(message);
-          port.close();
-          isolate.kill();
-        }
-      },
-    );
+    port.listen((message) {
+      if (message is StatisticsType) {
+        completer.complete(message);
+        port.close();
+        isolate.kill();
+      }
+    });
     return completer.future;
   }
 
@@ -136,19 +131,12 @@ class CFRepository {
     }
 
     for (final entry in languages.entries) {
-      languagesChartData.add(
-        CFLanguageData(
-          entry.key,
-          entry.value,
-        ),
-      );
+      languagesChartData.add(CFLanguageData(entry.key, entry.value));
     }
     return languagesChartData;
   }
 
-  static List<CFVerdictsData> _getVerdictsData(
-    List<CFSubmission> submissions,
-  ) {
+  static List<CFVerdictsData> _getVerdictsData(List<CFSubmission> submissions) {
     final verdicts = <CFSubmissionVerdict, int>{};
     final verdictsCharData = <CFVerdictsData>[];
     for (final submission in submissions) {
@@ -168,12 +156,7 @@ class CFRepository {
     }
 
     for (final entry in verdicts.entries) {
-      verdictsCharData.add(
-        CFVerdictsData(
-          entry.key,
-          entry.value,
-        ),
-      );
+      verdictsCharData.add(CFVerdictsData(entry.key, entry.value));
     }
     return verdictsCharData;
   }
@@ -185,6 +168,6 @@ class CFRepository {
     final languagesData = _getLanguagesData(submissions);
     final verdictsData = _getVerdictsData(submissions);
 
-    port.send(Tuple2(languagesData, verdictsData));
+    port.send((languagesData, verdictsData));
   }
 }

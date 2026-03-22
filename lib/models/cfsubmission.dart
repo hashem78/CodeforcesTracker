@@ -24,7 +24,7 @@ enum CFSubmissionVerdict {
   CHALLENGED,
   SKIPPED,
   TESTING,
-  REJECTED
+  REJECTED,
 }
 
 @freezed

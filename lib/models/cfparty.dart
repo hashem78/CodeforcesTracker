@@ -11,7 +11,7 @@ enum CFParticipantType {
   PRACTICE,
   VIRTUAL,
   MANAGER,
-  OUT_OF_COMPETITION
+  OUT_OF_COMPETITION,
 }
 
 @freezed

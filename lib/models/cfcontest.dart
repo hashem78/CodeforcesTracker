@@ -6,6 +6,7 @@ part 'cfcontest.freezed.dart';
 part 'cfcontest.g.dart';
 
 enum CFContestType { CF, IOI, ICPC }
+
 enum CFConstestPhase {
   BEFORE,
   CODING,

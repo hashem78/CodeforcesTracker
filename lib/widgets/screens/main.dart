@@ -1,8 +1,8 @@
 import 'package:code_forces_tracker/models/cfsubmission.dart';
+import 'package:code_forces_tracker/notifiers/languages.dart';
+import 'package:code_forces_tracker/remote.dart';
 
 import 'package:code_forces_tracker/providers.dart';
-import 'package:code_forces_tracker/remote.dart';
-import 'package:code_forces_tracker/widgets/widgets/handle_inherited_widget.dart';
 import 'package:code_forces_tracker/widgets/widgets/pie_chart.dart';
 import 'package:code_forces_tracker/widgets/widgets/tab_bar_heading.dart';
 import 'package:enum_to_string/enum_to_string.dart';
@@ -13,9 +13,8 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MainScreen extends StatelessWidget {
-  const MainScreen({
-    Key? key,
-  }) : super(key: key);
+  const MainScreen({super.key, required this.handle});
+  final String handle;
 
   @override
   Widget build(BuildContext context) {
@@ -24,26 +23,18 @@ class MainScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('CodeForces Tracker'),
-          actions: const [
-            ThemeModeActionButton(),
-          ],
+          actions: const [ThemeModeActionButton()],
           bottom: const TabBar(
             tabs: [
-              TabBarHeading(
-                iconData: Icons.mail,
-                title: 'Submissions',
-              ),
-              TabBarHeading(
-                title: 'Statistics',
-                iconData: Icons.arrow_upward,
-              ),
+              TabBarHeading(iconData: Icons.mail, title: 'Submissions'),
+              TabBarHeading(title: 'Statistics', iconData: Icons.arrow_upward),
             ],
           ),
         ),
-        body: const TabBarView(
+        body: TabBarView(
           children: [
-            LatestSubmissionsTab(),
-            StatisticsTab(),
+            LatestSubmissionsTab(handle: handle),
+            StatisticsTab(handle: handle),
           ],
         ),
       ),
@@ -51,71 +42,57 @@ class MainScreen extends StatelessWidget {
   }
 }
 
-class ThemeModeActionButton extends HookWidget {
-  const ThemeModeActionButton({
-    Key? key,
-  }) : super(key: key);
+class ThemeModeActionButton extends ConsumerWidget {
+  const ThemeModeActionButton({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final themeMode = useProvider(themeModeProvider);
-    IconData? icon;
-    if (themeMode == ThemeMode.system) {
-      final currentBrightness = MediaQuery.of(context).platformBrightness;
-      if (currentBrightness == Brightness.dark) {
-        icon = Icons.wb_sunny;
-      } else {
-        icon = Icons.wb_cloudy;
-      }
-    } else if (themeMode == ThemeMode.dark) {
-      icon = Icons.wb_sunny;
-    } else {
-      icon = Icons.wb_cloudy;
-    }
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeModeProvider);
+    final icon = switch (themeMode) {
+      ThemeMode.system =>
+        MediaQuery.of(context).platformBrightness == Brightness.dark
+            ? Icons.wb_sunny
+            : Icons.wb_cloudy,
+      ThemeMode.dark => Icons.wb_sunny,
+      ThemeMode.light => Icons.wb_cloudy,
+    };
     return IconButton(
       icon: Icon(icon),
       onPressed: () {
         showDialog(
           context: context,
           builder: (BuildContext context) {
-            final themeMode = context.read(themeModeProvider);
-            return Dialog(
-              child: ListView(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                children: <Widget>[
-                  RadioListTile<ThemeMode>(
-                    value: ThemeMode.system,
-                    groupValue: themeMode,
-                    title: const Text('System'),
+            return Consumer(
+              builder: (context, dialogRef, _) {
+                final dialogThemeMode = dialogRef.watch(themeModeProvider);
+                return Dialog(
+                  child: RadioGroup<ThemeMode>(
+                    groupValue: dialogThemeMode,
                     onChanged: (ThemeMode? val) {
-                      context
-                          .read(themeModeProvider.notifier)
-                          .set(ThemeMode.system);
+                      if (val == null) return;
+                      dialogRef.read(themeModeProvider.notifier).set(val);
                     },
+                    child: ListView(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: const <Widget>[
+                        RadioListTile<ThemeMode>(
+                          value: ThemeMode.system,
+                          title: Text('System'),
+                        ),
+                        RadioListTile<ThemeMode>(
+                          value: ThemeMode.light,
+                          title: Text('Light'),
+                        ),
+                        RadioListTile<ThemeMode>(
+                          value: ThemeMode.dark,
+                          title: Text('Dark'),
+                        ),
+                      ],
+                    ),
                   ),
-                  RadioListTile<ThemeMode>(
-                    value: ThemeMode.light,
-                    groupValue: themeMode,
-                    title: const Text('Light'),
-                    onChanged: (ThemeMode? val) {
-                      context
-                          .read(themeModeProvider.notifier)
-                          .set(ThemeMode.light);
-                    },
-                  ),
-                  RadioListTile<ThemeMode>(
-                    value: ThemeMode.dark,
-                    groupValue: themeMode,
-                    title: const Text('Dark'),
-                    onChanged: (ThemeMode? val) {
-                      context
-                          .read(themeModeProvider.notifier)
-                          .set(ThemeMode.dark);
-                    },
-                  ),
-                ],
-              ),
+                );
+              },
             );
           },
         );
@@ -124,266 +101,190 @@ class ThemeModeActionButton extends HookWidget {
   }
 }
 
-class StatisticsTab extends StatefulHookWidget {
-  const StatisticsTab({Key? key}) : super(key: key);
+class StatisticsTab extends HookConsumerWidget {
+  const StatisticsTab({super.key, required this.handle});
+  final String handle;
 
   @override
-  State<StatisticsTab> createState() => _LanguagesTabState();
-}
-
-class _LanguagesTabState extends State<StatisticsTab>
-    with AutomaticKeepAliveClientMixin {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    final handle = HandleInheritedWidget.of(context)!.handle;
-    context.read(languagesProvider(handle).notifier).fetchData();
-    super.didChangeDependencies();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
-    final handle = HandleInheritedWidget.of(context)!.handle;
-    final data = useProvider(languagesProvider(handle));
-    return data.when(
-      loading: () {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      },
-      data: (data) {
-        return RefreshIndicator(
+  Widget build(BuildContext context, WidgetRef ref) {
+    final pageController = usePageController();
+    final asyncData = ref.watch(statisticsProvider(handle));
+    return switch (asyncData) {
+      AsyncLoading() => const Center(child: CircularProgressIndicator()),
+      AsyncError() => const Center(child: Text('An Error Occured')),
+      AsyncData(:final value) => RefreshIndicator(
           onRefresh: () async {
-            context.read(languagesProvider(handle).notifier).fetchData();
+            ref.invalidate(statisticsProvider(handle));
           },
           child: Scrollbar(
-            isAlwaysShown: true,
+            thumbVisibility: true,
+            controller: pageController,
             child: PageView(
+              controller: pageController,
               scrollDirection: Axis.vertical,
+              restorationId: 'a',
               children: [
                 CFPieChart(
                   key: const Key('languages'),
                   chartTitle: 'Languages',
-                  languagesData: data.item1,
+                  languagesData: value.$1,
                   id: 'l',
                 ),
                 CFPieChart(
                   key: const Key('verdicts'),
-                  verdictsData: data.item2,
+                  verdictsData: value.$2,
                   chartTitle: 'Verdicts',
                   id: 'v',
                 ),
               ],
-              restorationId: 'a',
             ),
           ),
-        );
-      },
-      error: (error) {
-        return const Center(
-          child: Text('An Error Occured'),
-        );
-      },
-    );
+        ),
+    };
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }
 
-class LatestSubmissionsTab extends StatefulHookWidget {
-  const LatestSubmissionsTab({Key? key}) : super(key: key);
-
-  @override
-  _LatestSubmissionsTabState createState() => _LatestSubmissionsTabState();
-}
-
-class _LatestSubmissionsTabState extends State<LatestSubmissionsTab>
-    with AutomaticKeepAliveClientMixin {
-  final pagingController = PagingController<int, CFSubmission>(firstPageKey: 1);
-  @override
-  void didChangeDependencies() {
-    final handle = HandleInheritedWidget.of(context)!.handle;
-    final submissionsNotifier = context.read(
-      submissionsProvider(handle).notifier,
-    );
-    pagingController.addPageRequestListener(
-      (pageKey) {
-        submissionsNotifier.getSubmissions(from: pageKey, count: 10);
-      },
-    );
-    submissionsNotifier.getSubmissions();
-    super.didChangeDependencies();
-  }
+class LatestSubmissionsTab extends HookWidget {
+  const LatestSubmissionsTab({super.key, required this.handle});
+  final String handle;
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-    final handle = HandleInheritedWidget.of(context)!.handle;
-    final submissions = useProvider(submissionsProvider(handle));
+    final filters = useMemoized(() => <CFSubmissionVerdict>{}, [handle]);
+    final repository = useMemoized(
+      () => CFRepository(handle: handle),
+      [handle],
+    );
 
-    return submissions.when(
-      initial: () {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      },
-      loading: () {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      },
-      data: (submissions, nextFrom, getUserState) {
-        if (getUserState == GetUserState.normal) {
-          pagingController.appendLastPage([]);
-        } else {
-          pagingController.appendPage(submissions, nextFrom);
-        }
-        return RefreshIndicator(
-          onRefresh: () async {
-            pagingController.refresh();
+    final nextFrom = useValueNotifier<int?>(1);
+    final pagingController = useMemoized(
+      () {
+        const pageSize = 10;
+        return PagingController<int, CFSubmission>(
+          getNextPageKey: (state) => nextFrom.value,
+          fetchPage: (pageKey) async {
+            var currentFrom = pageKey;
+            final allMatched = <CFSubmission>[];
+            const maxAttempts = 5;
+            for (var attempt = 0; attempt < maxAttempts; attempt++) {
+              if (attempt > 0) {
+                await Future.delayed(const Duration(milliseconds: 500));
+              }
+              final result = await repository.getUserStatus(
+                filters: filters,
+                from: currentFrom,
+                count: pageSize,
+              );
+              allMatched.addAll(result.$1);
+              currentFrom += pageSize;
+              if (result.$2 == GetUserState.normal) {
+                nextFrom.value = null;
+                return allMatched;
+              }
+              if (allMatched.isNotEmpty) {
+                nextFrom.value = currentFrom;
+                return allMatched;
+              }
+            }
+            nextFrom.value = currentFrom;
+            return allMatched;
           },
-          child: CustomScrollView(
-            slivers: [
-              SliverToBoxAdapter(
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.width / 7,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: CFSubmissionVerdict.values.map<Widget>(
-                      (e) {
-                        return FilteringWidgetButton(
-                          pagingController: pagingController,
-                          verdict: e,
-                        );
-                      },
-                    ).toList(),
-                  ),
-                ),
-              ),  
-              PagedSliverList(
-                pagingController: pagingController,
-                builderDelegate: PagedChildBuilderDelegate<CFSubmission>(
-                  itemBuilder: (context, item, index) {
-                    return ListTile(
-                      title: Text(item.problem.name),
-                      onTap: () async {
-                        if (item.url != null) {
-                          if (await canLaunch(item.url!)) {
-                            await launch(item.url!);
-                          }
-                        }
-                      },
-                      subtitle: Text('Verdict: ${getVerdict(item.verdict)}'),
-                    );
-                  },
-                ),
+        );
+      },
+      [handle],
+    );
+
+    useEffect(() => pagingController.dispose, [pagingController]);
+
+    final pagingState = useValueListenable(pagingController);
+
+    return RefreshIndicator(
+      onRefresh: () async {
+        nextFrom.value = 1;
+        pagingController.refresh();
+      },
+      child: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: MediaQuery.of(context).size.width / 7,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: CFSubmissionVerdict.values.map<Widget>((e) {
+                  return FilteringWidgetButton(
+                    pagingController: pagingController,
+                    filters: filters,
+                    nextFrom: nextFrom,
+                    verdict: e,
+                  );
+                }).toList(),
               ),
-            ],
+            ),
           ),
-        );
-      },
-      error: (String? error) {
-        return const Center(
-          child: Text('Error'),
-        );
-      },
+          PagedSliverList<int, CFSubmission>(
+            state: pagingState,
+            fetchNextPage: pagingController.fetchNextPage,
+            builderDelegate: PagedChildBuilderDelegate<CFSubmission>(
+              itemBuilder: (context, item, index) {
+                return ListTile(
+                  title: Text(item.problem.name),
+                  onTap: () async {
+                    if (item.url != null) {
+                      final uri = Uri.parse(item.url!);
+                      if (await canLaunchUrl(uri)) {
+                        await launchUrl(uri);
+                      }
+                    }
+                  },
+                  subtitle: Text(
+                    'Verdict: ${item.verdict != null ? EnumToString.convertToString(item.verdict) : 'unavailable'}',
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
-
-  String getVerdict(CFSubmissionVerdict? verdict) {
-    if (verdict != null) {
-      return EnumToString.convertToString(verdict);
-    } else {
-      return 'unavailable';
-    }
-  }
-
-  @override
-  bool get wantKeepAlive => true;
 }
 
 class FilteringWidgetButton extends HookWidget {
   const FilteringWidgetButton({
-    Key? key,
+    super.key,
     required this.verdict,
     required this.pagingController,
-  }) : super(key: key);
+    required this.filters,
+    required this.nextFrom,
+  });
   final CFSubmissionVerdict verdict;
-  final PagingController pagingController;
+  final PagingController<int, CFSubmission> pagingController;
+  final Set<CFSubmissionVerdict> filters;
+  final ValueNotifier<int?> nextFrom;
+
   @override
   Widget build(BuildContext context) {
-    final isFilteringFor = useValueNotifier(false);
+    final isActive = useState(false);
     return Padding(
-      padding: const EdgeInsets.only(
-        top: 8.0,
-        left: 8.0,
-        right: 8.0,
-      ),
+      padding: const EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0),
       child: OutlinedButton(
         onPressed: () {
-          final notifier =
-              context.read(submissionsProvider('hashalayan').notifier);
-          if (!isFilteringFor.value) {
-            notifier.addFilter(verdict);
+          if (!isActive.value) {
+            filters.add(verdict);
           } else {
-            notifier.removeFilter(verdict);
+            filters.remove(verdict);
           }
+          nextFrom.value = 1;
           pagingController.refresh();
-          isFilteringFor.value = !isFilteringFor.value;
+          isActive.value = !isActive.value;
         },
-        style: OutlinedButton.styleFrom(),
         child: Text(
           EnumToString.convertToString(verdict),
           style: TextStyle(
-            color:
-                useValueListenable(isFilteringFor) ? Colors.grey : Colors.blue,
+            color: isActive.value ? Colors.grey : Colors.blue,
           ),
         ),
       ),
     );
   }
 }
-//Consumer(
-//   builder: (context, watch, _) {
-//     IconData? icon;
-//     final themeMode = watch(themeModeProvider);
-//     if (themeMode == ThemeMode.system) {
-//       final currentBrightness =
-//           MediaQuery.of(context).platformBrightness;
-//       if (currentBrightness == Brightness.dark) {
-//         icon = Icons.wb_sunny;
-//       } else {
-//         icon = Icons.wb_cloudy;
-//       }
-//     } else if (themeMode == ThemeMode.dark) {
-//       icon = Icons.wb_sunny;
-//     } else {
-//       icon = Icons.wb_cloudy;
-//     }
-//     return IconButton(
-//       onPressed: () {
-//         final notifier = context.read(themeModeProvider.notifier);
-//         if (themeMode == ThemeMode.system) {
-//           final currentBrightness =
-//               MediaQuery.of(context).platformBrightness;
-//           if (currentBrightness == Brightness.dark) {
-//             notifier.set(ThemeMode.light);
-//           } else {
-//             notifier.set(ThemeMode.dark);
-//           }
-//         } else if (themeMode == ThemeMode.dark) {
-//           notifier.set(ThemeMode.light);
-//         } else {
-//           notifier.set(ThemeMode.dark);
-//         }
-//       },
-//       icon: Icon(icon),
-//     );
-//   },
-// ),
