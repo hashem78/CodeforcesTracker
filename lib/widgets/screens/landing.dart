@@ -1,34 +1,47 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:code_forces_tracker/main.dart';
-import 'package:code_forces_tracker/models/cfhandle.dart';
-import 'package:code_forces_tracker/notifiers/handle.dart';
+import 'package:code_forces_tracker/remote.dart';
 import 'package:code_forces_tracker/router.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 @RoutePage()
-class LandingScreen extends HookConsumerWidget {
+class LandingScreen extends HookWidget {
   const LandingScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final handleController = useTextEditingController();
-    ref.listen<CFHandle>(handleProvider, (previous, value) {
-      switch (value) {
-        case CFHandleLoading():
-          scaffoldMessengerKey.currentState!.showSnackBar(
-            SnackBar(
-              content: Row(
-                children: const [
-                  CircularProgressIndicator(),
-                  SizedBox(width: 10),
-                  Text('Looking for handle'),
-                ],
-              ),
-            ),
-          );
-        case CFHandleError():
+    final isLoading = useState(false);
+
+    Future<void> submit() async {
+      final handle = handleController.text.trim();
+      if (handle.isEmpty) return;
+
+      FocusScope.of(context).unfocus();
+      isLoading.value = true;
+
+      scaffoldMessengerKey.currentState!.showSnackBar(
+        SnackBar(
+          content: Row(
+            children: const [
+              CircularProgressIndicator(),
+              SizedBox(width: 10),
+              Text('Looking for handle'),
+            ],
+          ),
+        ),
+      );
+
+      try {
+        final valid = await CFRepository.validateHandle(handle);
+        scaffoldMessengerKey.currentState!.hideCurrentSnackBar();
+
+        if (valid) {
+          if (context.mounted) {
+            context.router.push(MainRoute(handle: handle));
+          }
+        } else {
           scaffoldMessengerKey.currentState!.showSnackBar(
             const SnackBar(
               content: Text(
@@ -37,13 +50,22 @@ class LandingScreen extends HookConsumerWidget {
               ),
             ),
           );
-        case CFHandleData(:final handle):
-          scaffoldMessengerKey.currentState!.hideCurrentSnackBar();
-          context.router.push(MainRoute(handle: handle));
-        case _:
-          break;
+        }
+      } catch (_) {
+        scaffoldMessengerKey.currentState!.hideCurrentSnackBar();
+        scaffoldMessengerKey.currentState!.showSnackBar(
+          const SnackBar(
+            content: Text(
+              'An error occurred, please try again later.',
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        );
+      } finally {
+        isLoading.value = false;
       }
-    });
+    }
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -55,13 +77,12 @@ class LandingScreen extends HookConsumerWidget {
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
             ),
-            TextField(controller: handleController),
+            TextField(
+              controller: handleController,
+              onSubmitted: (_) => submit(),
+            ),
             ElevatedButton(
-              onPressed: () {
-                FocusScope.of(context).unfocus();
-                final handleNotifier = ref.read(handleProvider.notifier);
-                handleNotifier.changeHandleTo(handleController.text);
-              },
+              onPressed: isLoading.value ? null : submit,
               child: const Text('Track'),
             ),
           ],

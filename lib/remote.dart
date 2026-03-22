@@ -21,62 +21,60 @@ class CFRepository {
 
   final http.Client _client;
 
-  String get _userStatus =>
-      'https://codeforces.com/api/user.status?handle=$handle';
+  static const _baseUrl = 'https://codeforces.com/api';
+
+  /// Validates that a handle exists on Codeforces.
+  /// Returns `true` if found, `false` otherwise.
+  static Future<bool> validateHandle(String handle) async {
+    final response = await http.get(
+      Uri.parse('$_baseUrl/user.info?handles=$handle'),
+    );
+    if (response.statusCode != 200) return false;
+    final json = jsonDecode(response.body);
+    return json['status'] == 'OK';
+  }
+
   Future<UsersStatusType> getUserStatus({
     required Set<CFSubmissionVerdict> filters,
     int from = 1,
     int count = 10,
   }) async {
-    try {
-      final http.Response response = await _client.get(
-        Uri.parse('$_userStatus&from=$from&count=$count'),
-      );
-      if (response.statusCode != 200) {
-        throw Exception('API error: ${response.statusCode}');
-      }
-      final dynamic decodedResponse = jsonDecode(response.body);
-      final String status = decodedResponse['status'];
-
-      print(from);
-
-      if (status == 'OK' && response.statusCode == 200) {
-        final List<CFSubmission> submissions = [];
-        if (decodedResponse['result'].isEmpty) {
-          return (const <CFSubmission>[], GetUserState.normal);
-        }
-        for (final submission in decodedResponse['result']) {
-          if (submission['contestId'] != null) {
-            submission['url'] =
-                'https://codeforces.com/contest/${submission["contestId"]}/submission/${submission["id"]}';
-          }
-          final cfsubmission = CFSubmission.fromJson(submission);
-          if (filters.isNotEmpty) {
-            if (filters.contains(cfsubmission.verdict)) {
-              submissions.add(cfsubmission);
-            }
-          } else {
-            submissions.add(cfsubmission);
-          }
-        }
-        if (submissions.isEmpty) {
-          return (const <CFSubmission>[], GetUserState.filtering);
-        } else {
-          return (submissions, GetUserState.none);
-        }
-      } else {
-        throw Exception('Failed while fetching submissions');
-      }
-    } catch (e, st) {
-      print(e);
-      print(st);
-      rethrow;
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/user.status?handle=$handle&from=$from&count=$count'),
+    );
+    if (response.statusCode != 200) {
+      throw Exception('API error: ${response.statusCode}');
     }
+    final decodedResponse = jsonDecode(response.body);
+
+    if (decodedResponse['status'] != 'OK') {
+      throw Exception('Failed while fetching submissions');
+    }
+
+    if ((decodedResponse['result'] as List).isEmpty) {
+      return (const <CFSubmission>[], GetUserState.normal);
+    }
+
+    final submissions = <CFSubmission>[];
+    for (final submission in decodedResponse['result']) {
+      if (submission['contestId'] != null) {
+        submission['url'] =
+            'https://codeforces.com/contest/${submission["contestId"]}/submission/${submission["id"]}';
+      }
+      final cfsubmission = CFSubmission.fromJson(submission);
+      if (filters.isEmpty || filters.contains(cfsubmission.verdict)) {
+        submissions.add(cfsubmission);
+      }
+    }
+
+    if (submissions.isEmpty) {
+      return (const <CFSubmission>[], GetUserState.filtering);
+    }
+    return (submissions, GetUserState.none);
   }
 
   Future<StatisticsType> getStatistics() async {
     final port = ReceivePort();
-
     final isolate = await Isolate.spawn<List>(_getStatistics, [
       port.sendPort,
       handle,
@@ -93,81 +91,50 @@ class CFRepository {
   }
 
   static Future<List<CFSubmission>> _getAllSubmissions(String handle) async {
-    final url = 'https://codeforces.com/api/user.status?handle=$handle';
-    final response = await http.get(Uri.parse(url));
-    final decodedResponse = jsonDecode(response.body);
-    final submissions = <CFSubmission>[];
-    if (response.statusCode == 200 && decodedResponse['status'] == 'OK') {
-      for (final submission in decodedResponse['result']) {
-        submissions.add(CFSubmission.fromJson(submission));
-      }
-    } else {
-      throw Exception(
-        'An error occured while trying to get all submissions in isolate',
-      );
+    final response = await http.get(
+      Uri.parse('$_baseUrl/user.status?handle=$handle'),
+    );
+    if (response.statusCode != 200) {
+      throw Exception('API error: ${response.statusCode}');
     }
-    return submissions;
+    final decodedResponse = jsonDecode(response.body);
+    if (decodedResponse['status'] != 'OK') {
+      throw Exception('Failed to fetch all submissions');
+    }
+    return [
+      for (final submission in decodedResponse['result'])
+        CFSubmission.fromJson(submission),
+    ];
   }
 
-  static List<CFLanguageData> _getLanguagesData(
-    List<CFSubmission> submissions,
-  ) {
-    final languages = <String, int>{};
-    final languagesChartData = <CFLanguageData>[];
-    for (final submission in submissions) {
-      if (!languages.containsKey(submission.programmingLanguage)) {
-        languages[submission.programmingLanguage] = 1;
-      } else {
-        languages[submission.programmingLanguage] =
-            languages[submission.programmingLanguage]! + 1;
-      }
+  static List<CFLanguageData> _getLanguagesData(List<CFSubmission> submissions) {
+    final counts = <String, int>{};
+    for (final s in submissions) {
+      counts[s.programmingLanguage] = (counts[s.programmingLanguage] ?? 0) + 1;
     }
-    final entriesList = languages.entries.toList();
-    MapEntry<String, int> mx = entriesList.first;
-    for (int i = 1; i < entriesList.length; ++i) {
-      if (entriesList[i].value > mx.value) {
-        mx = entriesList[i];
-      }
-    }
-
-    for (final entry in languages.entries) {
-      languagesChartData.add(CFLanguageData(entry.key, entry.value));
-    }
-    return languagesChartData;
+    return [
+      for (final entry in counts.entries)
+        CFLanguageData(entry.key, entry.value),
+    ];
   }
 
   static List<CFVerdictsData> _getVerdictsData(List<CFSubmission> submissions) {
-    final verdicts = <CFSubmissionVerdict, int>{};
-    final verdictsCharData = <CFVerdictsData>[];
-    for (final submission in submissions) {
-      if (!verdicts.containsKey(submission.verdict) &&
-          submission.verdict != null) {
-        verdicts[submission.verdict!] = 1;
-      } else {
-        verdicts[submission.verdict!] = verdicts[submission.verdict]! + 1;
+    final counts = <CFSubmissionVerdict, int>{};
+    for (final s in submissions) {
+      if (s.verdict != null) {
+        counts[s.verdict!] = (counts[s.verdict!] ?? 0) + 1;
       }
     }
-    final entriesList = verdicts.entries.toList();
-    MapEntry<CFSubmissionVerdict, int> mx = entriesList.first;
-    for (int i = 1; i < entriesList.length; ++i) {
-      if (entriesList[i].value > mx.value) {
-        mx = entriesList[i];
-      }
-    }
-
-    for (final entry in verdicts.entries) {
-      verdictsCharData.add(CFVerdictsData(entry.key, entry.value));
-    }
-    return verdictsCharData;
+    return [
+      for (final entry in counts.entries)
+        CFVerdictsData(entry.key, entry.value),
+    ];
   }
 
   static Future<void> _getStatistics(List message) async {
     final port = message[0] as SendPort;
     final handle = message[1] as String;
     final submissions = await _getAllSubmissions(handle);
-    final languagesData = _getLanguagesData(submissions);
-    final verdictsData = _getVerdictsData(submissions);
-
-    port.send((languagesData, verdictsData));
+    port.send((_getLanguagesData(submissions), _getVerdictsData(submissions)));
   }
 }
