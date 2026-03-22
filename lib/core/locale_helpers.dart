@@ -13,5 +13,6 @@ Iterable<Locale> get supportedLocales =>
 const localizationsDelegates = [
   GlobalMaterialLocalizations.delegate,
   GlobalWidgetsLocalizations.delegate,
+  GlobalCupertinoLocalizations.delegate,
   FormBuilderLocalizations.delegate,
 ];
