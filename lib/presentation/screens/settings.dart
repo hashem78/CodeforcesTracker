@@ -114,5 +114,6 @@ class _LanguageSection extends ConsumerWidget {
 
   String _localeName(AppLocale locale) => switch (locale) {
         AppLocale.en => t.settings.languageNames.en,
+        AppLocale.ar => t.settings.languageNames.ar,
       };
 }

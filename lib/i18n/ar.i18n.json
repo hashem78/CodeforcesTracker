@@ -1,0 +1,42 @@
+{
+  "appTitle": "متتبع كودفورسز",
+  "landing": {
+    "handleLabel": "معرّف كودفورسز",
+    "handleHint": "أدخل معرّفك",
+    "track": "تتبّع",
+    "validation": {
+      "required": "المعرّف مطلوب",
+      "minLength": "يجب أن يكون المعرّف 3 أحرف على الأقل",
+      "maxLength": "يجب ألا يتجاوز المعرّف 24 حرفاً",
+      "invalidChars": "يُسمح فقط بالأحرف والأرقام والنقاط والشرطات والشرطات السفلية",
+      "notFound": "المعرّف غير موجود على كودفورسز"
+    },
+    "error": "حدث خطأ، يرجى المحاولة مرة أخرى لاحقاً."
+  },
+  "main": {
+    "submissions": "الحلول",
+    "statistics": "الإحصائيات",
+    "verdict": "الحكم: $verdict",
+    "verdictUnavailable": "الحكم: غير متوفر",
+    "error": "حدث خطأ",
+    "errorDetails": "خطأ: $error"
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "theme": "المظهر",
+    "language": "اللغة",
+    "languageNames": {
+      "en": "الإنجليزية",
+      "ar": "العربية"
+    }
+  },
+  "theme": {
+    "system": "النظام",
+    "light": "فاتح",
+    "dark": "داكن"
+  },
+  "charts": {
+    "languages": "اللغات",
+    "verdicts": "الأحكام"
+  }
+}

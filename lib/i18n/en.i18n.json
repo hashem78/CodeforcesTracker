@@ -26,7 +26,8 @@
     "theme": "Theme",
     "language": "Language",
     "languageNames": {
-      "en": "English"
+      "en": "English",
+      "ar": "Arabic"
     }
   },
   "theme": {
