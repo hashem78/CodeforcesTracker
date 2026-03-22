@@ -25,6 +25,10 @@ dependencies:
   auto_route: ^11.1.0
   chopper: ^8.5.1
   fast_immutable_collections: ^11.1.0
+  flutter_form_builder: ^10.3.0+2
+  form_builder_validators: ^11.3.0
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:

@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:code_forces_tracker/router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:code_forces_tracker/providers/prefs.dart';
@@ -49,6 +51,11 @@ class MyApp extends ConsumerWidget {
             ? Brightness.dark
             : Brightness.light,
       ),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        FormBuilderLocalizations.delegate,
+      ],
       routerConfig: _appRouter.config(),
     );
   }
