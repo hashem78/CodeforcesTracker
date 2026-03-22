@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:code_forces_tracker/widgets/screens/landing.dart';
-import 'package:code_forces_tracker/widgets/screens/main.dart';
+import 'package:code_forces_tracker/presentation/screens/landing.dart';
+import 'package:code_forces_tracker/presentation/screens/main.dart';
 
 part 'router.gr.dart';
 

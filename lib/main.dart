@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:code_forces_tracker/providers.dart';
+import 'package:code_forces_tracker/providers/prefs.dart';
+import 'package:code_forces_tracker/providers/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {

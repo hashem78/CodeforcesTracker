@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:code_forces_tracker/models/cflanguagedata.dart';
 import 'package:code_forces_tracker/models/cfverdictsdata.dart';
-import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
@@ -57,7 +56,7 @@ class _CFPieChartState extends State<CFPieChart>
         );
         return PieChartSectionData(
           value: data.value.toDouble(),
-          title: EnumToString.convertToString(data.verdict),
+          title: data.verdict.name,
           color: color,
           radius: 100,
           titleStyle: const TextStyle(fontSize: 10, color: Colors.white),
