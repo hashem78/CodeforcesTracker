@@ -5,9 +5,11 @@ java = "21"
 
 [env]
 ANDROID_HOME = "{{xdg_data_home}}/mise/installs/android-sdk/1.0"
+ANDROID_AVD_HOME = "{{xdg_config_home}}/.android/avd"
 CHROME_EXECUTABLE = "/usr/bin/brave"
 
 _.path = [
+  "{{env.ANDROID_HOME}}/emulator",
   "{{env.ANDROID_HOME}}/platform-tools",
   "{{env.ANDROID_HOME}}/build-tools/28.0.3",
   "{{env.ANDROID_HOME}}/cmdline-tools/latest/bin",

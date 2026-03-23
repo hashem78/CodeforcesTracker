@@ -1,9 +1,17 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
-Brightness brightnessFor(ThemeMode mode) => switch (mode) {
-      ThemeMode.system => PlatformDispatcher.instance.platformBrightness,
-      ThemeMode.dark => Brightness.dark,
-      ThemeMode.light => Brightness.light,
-    };
+final lightTheme = ThemeData(
+  colorScheme: ColorScheme.fromSeed(
+    seedColor: Colors.blue,
+    brightness: Brightness.light,
+  ),
+  useMaterial3: true,
+);
+
+final darkTheme = ThemeData(
+  colorScheme: ColorScheme.fromSeed(
+    seedColor: Colors.blue,
+    brightness: Brightness.dark,
+  ),
+  useMaterial3: true,
+);

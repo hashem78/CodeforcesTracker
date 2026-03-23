@@ -3,7 +3,6 @@ import 'package:code_forces_tracker/core/theme_helpers.dart';
 import 'package:code_forces_tracker/providers/locale.dart';
 import 'package:code_forces_tracker/router.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:code_forces_tracker/providers/prefs.dart';
@@ -37,7 +36,6 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     final themeMode = ref.watch(themeModeProvider);
     final t = ref.watch(localeProvider);
 
@@ -49,7 +47,8 @@ class MyApp extends ConsumerWidget {
       supportedLocales: supportedLocales,
       localizationsDelegates: localizationsDelegates,
       themeMode: themeMode,
-      theme: ThemeData(brightness: brightnessFor(themeMode)),
+      theme: lightTheme,
+      darkTheme: darkTheme,
       routerConfig: _appRouter.config(),
     );
   }
