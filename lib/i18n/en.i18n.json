@@ -31,7 +31,12 @@
     "languageNames": {
       "en": "English",
       "ar": "Arabic"
-    }
+    },
+    "handle": "Handle",
+    "trackAnother": "Track another handle",
+    "trackAnotherConfirm": "Are you sure you want to track a different handle?",
+    "confirm": "Confirm",
+    "cancel": "Cancel"
   },
   "theme": {
     "system": "System",

@@ -1,8 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:code_forces_tracker/core/app_sizing.dart';
 import 'package:code_forces_tracker/i18n/strings.g.dart';
+import 'package:code_forces_tracker/providers/handle.dart';
 import 'package:code_forces_tracker/providers/locale.dart';
 import 'package:code_forces_tracker/providers/theme.dart';
+import 'package:code_forces_tracker/router.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -23,6 +25,8 @@ class SettingsScreen extends ConsumerWidget {
           _ThemeSection(t: t, themeMode: themeMode),
           const Divider(),
           _LanguageSection(t: t, currentLocale: localeNotifier.currentLocale),
+          const Divider(),
+          _HandleSection(t: t),
         ],
       ),
     );
@@ -99,4 +103,45 @@ class _LanguageSection extends ConsumerWidget {
     AppLocale.en => t.settings.languageNames.en,
     AppLocale.ar => t.settings.languageNames.ar,
   };
+}
+
+class _HandleSection extends ConsumerWidget {
+  const _HandleSection({required this.t});
+  final Translations t;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.fromLTRB(context.paddingLG, context.spaceMD, context.paddingLG, context.spaceSM),
+          child: Text(t.settings.handle, style: Theme.of(context).textTheme.titleMedium),
+        ),
+        ListTile(
+          leading: const Icon(Icons.swap_horiz),
+          title: Text(t.settings.trackAnother),
+          onTap: () async {
+            final confirmed = await showDialog<bool>(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text(t.settings.trackAnother),
+                content: Text(t.settings.trackAnotherConfirm),
+                actions: [
+                  TextButton(onPressed: () => Navigator.pop(context, false), child: Text(t.settings.cancel)),
+                  TextButton(onPressed: () => Navigator.pop(context, true), child: Text(t.settings.confirm)),
+                ],
+              ),
+            );
+            if (confirmed ?? false) {
+              ref.read(handleProvider.notifier).clear();
+              if (context.mounted) {
+                context.router.pushAndPopUntil(const LandingRoute(), predicate: (_) => false);
+              }
+            }
+          },
+        ),
+      ],
+    );
+  }
 }

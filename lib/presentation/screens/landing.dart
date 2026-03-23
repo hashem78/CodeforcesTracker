@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:code_forces_tracker/core/app_sizing.dart';
 import 'package:code_forces_tracker/main.dart';
+import 'package:code_forces_tracker/providers/handle.dart';
 import 'package:code_forces_tracker/providers/handle_validation.dart';
 import 'package:code_forces_tracker/providers/locale.dart';
 import 'package:code_forces_tracker/router.dart';
@@ -19,6 +20,18 @@ class LandingScreen extends HookConsumerWidget {
     final formKey = useMemoized(GlobalKey<FormBuilderState>.new);
     final validationState = ref.watch(handleValidatorProvider);
     final t = ref.watch(localeProvider);
+    final savedHandle = ref.read(handleProvider);
+    final didAutoNavigate = useRef(false);
+
+    useEffect(() {
+      if (savedHandle != null && !didAutoNavigate.value) {
+        didAutoNavigate.value = true;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          context.router.replace(MainRoute(handle: savedHandle));
+        });
+      }
+      return null;
+    }, [savedHandle]);
 
     ref.listen(handleValidatorProvider, (prev, next) {
       if (prev is! AsyncLoading) return;
@@ -26,6 +39,7 @@ class LandingScreen extends HookConsumerWidget {
         case AsyncData(value: HandleValidationResult.valid):
           scaffoldMessengerKey.currentState!.hideCurrentSnackBar();
           final handle = formKey.currentState!.fields['handle']!.value as String;
+          ref.read(handleProvider.notifier).set(handle.trim());
           context.router.push(MainRoute(handle: handle.trim()));
         case AsyncData(value: HandleValidationResult.invalid):
           scaffoldMessengerKey.currentState!.hideCurrentSnackBar();
@@ -73,6 +87,7 @@ class LandingScreen extends HookConsumerWidget {
                   SizedBox(height: context.spaceLG),
                   FormBuilderTextField(
                     name: 'handle',
+                    initialValue: savedHandle,
                     enabled: !validationState.isLoading,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     decoration: InputDecoration(

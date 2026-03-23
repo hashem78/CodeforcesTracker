@@ -31,7 +31,12 @@
     "languageNames": {
       "en": "الإنجليزية",
       "ar": "العربية"
-    }
+    },
+    "handle": "المعرّف",
+    "trackAnother": "تتبّع معرّف آخر",
+    "trackAnotherConfirm": "هل أنت متأكد أنك تريد تتبّع معرّف مختلف؟",
+    "confirm": "تأكيد",
+    "cancel": "إلغاء"
   },
   "theme": {
     "system": "النظام",
