@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:code_forces_tracker/core/app_sizing.dart';
 import 'package:code_forces_tracker/i18n/strings.g.dart';
 import 'package:code_forces_tracker/providers/locale.dart';
 import 'package:code_forces_tracker/providers/theme.dart';
@@ -39,7 +40,12 @@ class _ThemeSection extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          padding: EdgeInsets.fromLTRB(
+            context.paddingLG,
+            context.spaceMD,
+            context.paddingLG,
+            context.spaceSM,
+          ),
           child: Text(
             t.settings.theme,
             style: Theme.of(context).textTheme.titleMedium,
@@ -85,7 +91,12 @@ class _LanguageSection extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          padding: EdgeInsets.fromLTRB(
+            context.paddingLG,
+            context.spaceMD,
+            context.paddingLG,
+            context.spaceSM,
+          ),
           child: Text(
             t.settings.language,
             style: Theme.of(context).textTheme.titleMedium,
@@ -113,7 +124,7 @@ class _LanguageSection extends ConsumerWidget {
   }
 
   String _localeName(AppLocale locale) => switch (locale) {
-        AppLocale.en => t.settings.languageNames.en,
-        AppLocale.ar => t.settings.languageNames.ar,
-      };
+    AppLocale.en => t.settings.languageNames.en,
+    AppLocale.ar => t.settings.languageNames.ar,
+  };
 }

@@ -1,3 +1,4 @@
+import 'package:code_forces_tracker/core/app_sizing.dart';
 import 'package:code_forces_tracker/core/verdict_colors.dart';
 import 'package:code_forces_tracker/models/cfsubmission.dart';
 import 'package:code_forces_tracker/providers/locale.dart';
@@ -14,12 +15,16 @@ class SubmissionCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final t = ref.watch(localeProvider);
     final color = verdictColor(item.verdict);
+    final compact = context.isCompact;
     final submitted = DateTime.fromMillisecondsSinceEpoch(
       item.creationTimeSeconds * 1000,
     );
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      padding: EdgeInsets.symmetric(
+        horizontal: context.paddingMD,
+        vertical: context.spaceXS,
+      ),
       child: Card(
         clipBehavior: Clip.antiAlias,
         child: InkWell(
@@ -37,18 +42,20 @@ class SubmissionCard extends ConsumerWidget {
                 Container(width: 4, color: color),
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.all(12),
+                    padding: EdgeInsets.all(context.paddingMD),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
-                            Icon(
-                              verdictIcon(item.verdict),
-                              color: color,
-                              size: 18,
-                            ),
-                            const SizedBox(width: 8),
+                            if (!compact) ...[
+                              Icon(
+                                verdictIcon(item.verdict),
+                                color: color,
+                                size: context.iconSM,
+                              ),
+                              SizedBox(width: context.paddingSM),
+                            ],
                             Expanded(
                               child: Text(
                                 item.problem.name,
@@ -56,28 +63,32 @@ class SubmissionCard extends ConsumerWidget {
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            if (item.problem.rating != null)
+                            if (!compact && item.problem.rating != null) ...[
+                              SizedBox(width: context.paddingSM),
                               Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 2,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: context.paddingSM,
+                                  vertical: context.spaceXXS,
                                 ),
                                 decoration: BoxDecoration(
                                   color: color.withValues(alpha: 0.15),
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(
+                                    context.radiusSM,
+                                  ),
                                 ),
                                 child: Text(
                                   '${item.problem.rating}',
                                   style: TextStyle(
-                                    fontSize: 12,
+                                    fontSize: context.fontMD,
                                     fontWeight: FontWeight.bold,
                                     color: color,
                                   ),
                                 ),
                               ),
+                            ],
                           ],
                         ),
-                        const SizedBox(height: 4),
+                        SizedBox(height: context.spaceXS),
                         Text(
                           [
                             item.programmingLanguage,
@@ -85,28 +96,46 @@ class SubmissionCard extends ConsumerWidget {
                               t.main.contestLabel(id: '${item.contestId}'),
                           ].join(' · '),
                           style: Theme.of(context).textTheme.bodySmall,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: 2),
+                        SizedBox(height: context.spaceXXS),
                         Row(
                           children: [
-                            Text(
-                              [
-                                t.main.runtime(ms: '${item.timeConsumedMillis}'),
-                                t.main.memory(
-                                  kb: '${(item.memoryConsumedBytes / 1024).round()}',
+                            Flexible(
+                              child: Text(
+                                [
+                                  t.main.runtime(
+                                    ms: '${item.timeConsumedMillis}',
+                                  ),
+                                  if (!compact)
+                                    t.main.memory(
+                                      kb: '${(item.memoryConsumedBytes / 1024).round()}',
+                                    ),
+                                ].join(' · '),
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.outline,
+                                    ),
+                              ),
+                            ),
+                            if (!compact) ...[
+                              SizedBox(width: context.paddingSM),
+                              Flexible(
+                                child: Text(
+                                  timeago.format(submitted),
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context).textTheme.bodySmall
+                                      ?.copyWith(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.outline,
+                                      ),
                                 ),
-                              ].join(' · '),
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Theme.of(context).colorScheme.outline,
-                                  ),
-                            ),
-                            const Spacer(),
-                            Text(
-                              timeago.format(submitted),
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Theme.of(context).colorScheme.outline,
-                                  ),
-                            ),
+                              ),
+                            ],
                           ],
                         ),
                       ],

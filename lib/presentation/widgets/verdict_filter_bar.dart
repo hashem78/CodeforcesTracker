@@ -1,10 +1,15 @@
+import 'package:code_forces_tracker/core/app_sizing.dart';
 import 'package:code_forces_tracker/core/verdict_colors.dart';
 import 'package:code_forces_tracker/models/cfsubmission.dart';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
 
 class VerdictFilterBar extends StatelessWidget {
-  const VerdictFilterBar({super.key, required this.activeFilters, required this.onFiltersChanged});
+  const VerdictFilterBar({
+    super.key,
+    required this.activeFilters,
+    required this.onFiltersChanged,
+  });
 
   final ISet<CFSubmissionVerdict> activeFilters;
   final ValueChanged<ISet<CFSubmissionVerdict>> onFiltersChanged;
@@ -12,11 +17,14 @@ class VerdictFilterBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 56,
+      height: context.filterBarHeight,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        separatorBuilder: (_, _) => const SizedBox(width: 8),
+        padding: EdgeInsets.symmetric(
+          horizontal: context.paddingMD,
+          vertical: context.spaceSM,
+        ),
+        separatorBuilder: (_, _) => SizedBox(width: context.paddingSM),
         itemCount: CFSubmissionVerdict.values.length,
         itemBuilder: (context, index) {
           final verdict = CFSubmissionVerdict.values[index];

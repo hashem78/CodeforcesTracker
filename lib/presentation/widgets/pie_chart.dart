@@ -1,3 +1,4 @@
+import 'package:code_forces_tracker/core/app_sizing.dart';
 import 'package:code_forces_tracker/core/verdict_colors.dart';
 import 'package:code_forces_tracker/models/cflanguagedata.dart';
 import 'package:code_forces_tracker/models/cfverdictsdata.dart';
@@ -26,7 +27,6 @@ class CFPieChart extends StatefulWidget {
 
 class _CFPieChartState extends State<CFPieChart>
     with AutomaticKeepAliveClientMixin {
-
   int get _total {
     if (widget.languagesData != null) {
       return widget.languagesData!.fold(0, (sum, d) => sum + d.value);
@@ -60,68 +60,87 @@ class _CFPieChartState extends State<CFPieChart>
     final entries = _entries;
     final total = _total;
 
+    final short = context.shortScreen;
+
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.all(12),
-          child: Text(
-            widget.chartTitle,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+        if (!short)
+          Padding(
+            padding: EdgeInsets.all(context.paddingMD),
+            child: Text(
+              widget.chartTitle,
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+            ),
           ),
-        ),
         Expanded(
-          child: PieChart(
-            PieChartData(
-              sections: entries.map((e) {
-                final pct = e.value / total * 100;
-                final showLabel = pct >= 5;
-                return PieChartSectionData(
-                  value: e.value.toDouble(),
-                  title: showLabel ? '${pct.toStringAsFixed(1)}%' : '',
-                  color: e.color,
-                  radius: 90,
-                  titleStyle: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                );
-              }).toList(),
-              sectionsSpace: 2,
-              centerSpaceRadius: 36,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: SizedBox(
+              width: (context.chartRadius + context.chartCenterSpace) * 2,
+              height: (context.chartRadius + context.chartCenterSpace) * 2,
+              child: PieChart(
+                PieChartData(
+                  sections: entries.map((e) {
+                    final pct = e.value / total * 100;
+                    final showLabel = pct >= 5;
+                    return PieChartSectionData(
+                      value: e.value.toDouble(),
+                      title: showLabel ? '${pct.toStringAsFixed(1)}%' : '',
+                      color: e.color,
+                      radius: context.chartRadius,
+                      titleStyle: TextStyle(
+                        fontSize: context.fontSM,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    );
+                  }).toList(),
+                  sectionsSpace: 2,
+                  centerSpaceRadius: context.chartCenterSpace,
+                ),
+              ),
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-          child: Wrap(
-            spacing: 12,
-            runSpacing: 6,
-            alignment: WrapAlignment.center,
-            children: entries.map((e) {
-              return Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 10,
-                    height: 10,
-                    decoration: BoxDecoration(
-                      color: e.color,
-                      shape: BoxShape.circle,
+        if (!short)
+          Padding(
+            padding: EdgeInsets.fromLTRB(
+              context.paddingLG,
+              context.spaceSM,
+              context.paddingLG,
+              context.spaceMD,
+            ),
+            child: Wrap(
+              spacing: context.paddingMD,
+              runSpacing: context.spaceXS,
+              alignment: WrapAlignment.center,
+              children: entries.map((e) {
+                return Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: context.legendDot,
+                      height: context.legendDot,
+                      decoration: BoxDecoration(
+                        color: e.color,
+                        shape: BoxShape.circle,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    '${e.label} (${e.value})',
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ],
-              );
-            }).toList(),
+                    SizedBox(width: context.paddingXS),
+                    Flexible(
+                      child: Text(
+                        '${e.label} (${e.value})',
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ),
+                  ],
+                );
+              }).toList(),
+            ),
           ),
-        ),
       ],
     );
   }

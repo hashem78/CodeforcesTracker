@@ -4,6 +4,7 @@ import 'package:code_forces_tracker/providers/locale.dart';
 import 'package:code_forces_tracker/router.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:sizer/sizer.dart';
 
 import 'package:code_forces_tracker/providers/prefs.dart';
 import 'package:code_forces_tracker/providers/theme.dart';
@@ -39,17 +40,21 @@ class MyApp extends ConsumerWidget {
     final themeMode = ref.watch(themeModeProvider);
     final t = ref.watch(localeProvider);
 
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      scaffoldMessengerKey: scaffoldMessengerKey,
-      title: t.appTitle,
-      locale: t.flutterLocale,
-      supportedLocales: supportedLocales,
-      localizationsDelegates: localizationsDelegates,
-      themeMode: themeMode,
-      theme: lightTheme,
-      darkTheme: darkTheme,
-      routerConfig: _appRouter.config(),
+    return Sizer(
+      builder: (context, orientation, deviceType) {
+        return MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          scaffoldMessengerKey: scaffoldMessengerKey,
+          title: t.appTitle,
+          locale: t.flutterLocale,
+          supportedLocales: supportedLocales,
+          localizationsDelegates: localizationsDelegates,
+          themeMode: themeMode,
+          theme: lightTheme,
+          darkTheme: darkTheme,
+          routerConfig: _appRouter.config(),
+        );
+      },
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:code_forces_tracker/core/app_sizing.dart';
 import 'package:flutter/material.dart';
 
 class TabBarHeading extends StatelessWidget {
@@ -6,15 +7,17 @@ class TabBarHeading extends StatelessWidget {
   final IconData iconData;
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        children: [
-          Icon(iconData),
-          const SizedBox(width: 10),
-          Expanded(child: Text(title)),
-        ],
-      ),
+    return Tab(
+      child: context.isCompact
+          ? Text(title, overflow: TextOverflow.ellipsis)
+          : Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(iconData, size: 20),
+                const SizedBox(width: 8),
+                Flexible(child: Text(title, overflow: TextOverflow.ellipsis)),
+              ],
+            ),
     );
   }
 }

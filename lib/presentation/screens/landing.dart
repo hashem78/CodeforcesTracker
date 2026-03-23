@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:code_forces_tracker/core/app_sizing.dart';
 import 'package:code_forces_tracker/main.dart';
 import 'package:code_forces_tracker/providers/handle_validation.dart';
 import 'package:code_forces_tracker/providers/locale.dart';
@@ -24,7 +25,8 @@ class LandingScreen extends HookConsumerWidget {
       switch (next) {
         case AsyncData(value: HandleValidationResult.valid):
           scaffoldMessengerKey.currentState!.hideCurrentSnackBar();
-          final handle = formKey.currentState!.fields['handle']!.value as String;
+          final handle =
+              formKey.currentState!.fields['handle']!.value as String;
           context.router.push(MainRoute(handle: handle.trim()));
         case AsyncData(value: HandleValidationResult.invalid):
           scaffoldMessengerKey.currentState!.hideCurrentSnackBar();
@@ -64,58 +66,70 @@ class LandingScreen extends HookConsumerWidget {
       ),
       body: FormBuilder(
         key: formKey,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  t.appTitle,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 60,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                FormBuilderTextField(
-                  name: 'handle',
-                  enabled: !validationState.isLoading,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  decoration: InputDecoration(
-                    labelText: t.landing.handleLabel,
-                    hintText: t.landing.handleHint,
-                    prefixIcon: const Icon(Icons.person),
-                    border: const OutlineInputBorder(),
-                  ),
-                  validator: FormBuilderValidators.compose([
-                    FormBuilderValidators.required(),
-                    FormBuilderValidators.minLength(3,
-                        errorText: t.landing.validation.minLength),
-                    FormBuilderValidators.maxLength(24,
-                        errorText: t.landing.validation.maxLength),
-                    FormBuilderValidators.match(
-                      RegExp(r'^[a-zA-Z0-9._-]+$'),
-                      errorText: t.landing.validation.invalidChars,
+        child: Center(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+              horizontal: context.paddingXL,
+              vertical: context.spaceMD,
+            ),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: formMaxWidth),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    t.appTitle,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: context.fontXL,
+                      fontWeight: FontWeight.bold,
                     ),
-                  ]),
-                  onSubmitted: (_) => submit(),
-                ),
-                const SizedBox(height: 16),
-                switch (validationState) {
-                  AsyncLoading() => const Padding(
-                      padding: EdgeInsets.all(16),
-                      child: CircularProgressIndicator(),
+                  ),
+                  SizedBox(height: context.spaceLG),
+                  FormBuilderTextField(
+                    name: 'handle',
+                    enabled: !validationState.isLoading,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    decoration: InputDecoration(
+                      labelText: t.landing.handleLabel,
+                      hintText: t.landing.handleHint,
+                      prefixIcon: const Icon(Icons.person),
+                      border: const OutlineInputBorder(),
                     ),
-                  _ => SizedBox(
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(),
+                      FormBuilderValidators.minLength(
+                        3,
+                        errorText: t.landing.validation.minLength,
+                      ),
+                      FormBuilderValidators.maxLength(
+                        24,
+                        errorText: t.landing.validation.maxLength,
+                      ),
+                      FormBuilderValidators.match(
+                        RegExp(r'^[a-zA-Z0-9._-]+$'),
+                        errorText: t.landing.validation.invalidChars,
+                      ),
+                    ]),
+                    onSubmitted: (_) => submit(),
+                  ),
+                  SizedBox(height: context.spaceMD),
+                  switch (validationState) {
+                    AsyncLoading() => Padding(
+                      padding: EdgeInsets.all(context.paddingLG),
+                      child: const CircularProgressIndicator(),
+                    ),
+                    _ => SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: submit,
                         child: Text(t.landing.track),
                       ),
                     ),
-                },
-              ],
+                  },
+                ],
+              ),
+            ),
           ),
         ),
       ),
