@@ -19,7 +19,7 @@ abstract class CFParty with _$CFParty {
     String? teamName,
     bool ghost,
     int? room,
-    int startTimeSeconds,
+    int? startTimeSeconds,
   ) = _CFParty;
 
   factory CFParty.fromJson(Map<String, dynamic> json) => _$CFPartyFromJson(json);
