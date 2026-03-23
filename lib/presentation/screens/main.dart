@@ -35,10 +35,7 @@ class MainScreen extends ConsumerWidget {
           bottom: TabBar(
             tabs: [
               TabBarHeading(iconData: Icons.mail, title: t.main.submissions),
-              TabBarHeading(
-                title: t.main.statistics,
-                iconData: Icons.arrow_upward,
-              ),
+              TabBarHeading(title: t.main.statistics, iconData: Icons.arrow_upward),
             ],
           ),
         ),

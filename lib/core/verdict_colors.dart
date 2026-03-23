@@ -2,36 +2,36 @@ import 'package:code_forces_tracker/models/cfsubmission.dart';
 import 'package:flutter/material.dart';
 
 Color verdictColor(CFSubmissionVerdict? verdict) => switch (verdict) {
-      CFSubmissionVerdict.OK => Colors.green,
-      CFSubmissionVerdict.WRONG_ANSWER => Colors.red,
-      CFSubmissionVerdict.TIME_LIMIT_EXCEEDED => Colors.orange,
-      CFSubmissionVerdict.MEMORY_LIMIT_EXCEEDED => Colors.amber.shade700,
-      CFSubmissionVerdict.COMPILATION_ERROR => Colors.yellow.shade800,
-      CFSubmissionVerdict.RUNTIME_ERROR => Colors.purple,
-      CFSubmissionVerdict.PARTIAL => Colors.blue,
-      CFSubmissionVerdict.IDLENESS_LIMIT_EXCEEDED => Colors.deepOrange,
-      CFSubmissionVerdict.CHALLENGED => Colors.pink,
-      CFSubmissionVerdict.FAILED => Colors.red.shade900,
-      CFSubmissionVerdict.SECURITY_VIOLATED => Colors.brown,
-      CFSubmissionVerdict.CRASHED => Colors.red.shade700,
-      CFSubmissionVerdict.INPUT_PREPARATION_CRASHED => Colors.brown.shade700,
-      CFSubmissionVerdict.SKIPPED => Colors.grey,
-      CFSubmissionVerdict.TESTING => Colors.lightBlue,
-      CFSubmissionVerdict.REJECTED => Colors.blueGrey,
-      CFSubmissionVerdict.PRESENTATION_ERROR => Colors.teal,
-      null => Colors.grey.shade400,
-    };
+  CFSubmissionVerdict.OK => Colors.green,
+  CFSubmissionVerdict.WRONG_ANSWER => Colors.red,
+  CFSubmissionVerdict.TIME_LIMIT_EXCEEDED => Colors.orange,
+  CFSubmissionVerdict.MEMORY_LIMIT_EXCEEDED => Colors.amber.shade700,
+  CFSubmissionVerdict.COMPILATION_ERROR => Colors.yellow.shade800,
+  CFSubmissionVerdict.RUNTIME_ERROR => Colors.purple,
+  CFSubmissionVerdict.PARTIAL => Colors.blue,
+  CFSubmissionVerdict.IDLENESS_LIMIT_EXCEEDED => Colors.deepOrange,
+  CFSubmissionVerdict.CHALLENGED => Colors.pink,
+  CFSubmissionVerdict.FAILED => Colors.red.shade900,
+  CFSubmissionVerdict.SECURITY_VIOLATED => Colors.brown,
+  CFSubmissionVerdict.CRASHED => Colors.red.shade700,
+  CFSubmissionVerdict.INPUT_PREPARATION_CRASHED => Colors.brown.shade700,
+  CFSubmissionVerdict.SKIPPED => Colors.grey,
+  CFSubmissionVerdict.TESTING => Colors.lightBlue,
+  CFSubmissionVerdict.REJECTED => Colors.blueGrey,
+  CFSubmissionVerdict.PRESENTATION_ERROR => Colors.teal,
+  null => Colors.grey.shade400,
+};
 
 IconData verdictIcon(CFSubmissionVerdict? verdict) => switch (verdict) {
-      CFSubmissionVerdict.OK => Icons.check_circle,
-      CFSubmissionVerdict.WRONG_ANSWER => Icons.cancel,
-      CFSubmissionVerdict.TIME_LIMIT_EXCEEDED => Icons.timer_off,
-      CFSubmissionVerdict.MEMORY_LIMIT_EXCEEDED => Icons.memory,
-      CFSubmissionVerdict.COMPILATION_ERROR => Icons.build_circle,
-      CFSubmissionVerdict.RUNTIME_ERROR => Icons.bug_report,
-      CFSubmissionVerdict.TESTING => Icons.hourglass_top,
-      _ => Icons.help_outline,
-    };
+  CFSubmissionVerdict.OK => Icons.check_circle,
+  CFSubmissionVerdict.WRONG_ANSWER => Icons.cancel,
+  CFSubmissionVerdict.TIME_LIMIT_EXCEEDED => Icons.timer_off,
+  CFSubmissionVerdict.MEMORY_LIMIT_EXCEEDED => Icons.memory,
+  CFSubmissionVerdict.COMPILATION_ERROR => Icons.build_circle,
+  CFSubmissionVerdict.RUNTIME_ERROR => Icons.bug_report,
+  CFSubmissionVerdict.TESTING => Icons.hourglass_top,
+  _ => Icons.help_outline,
+};
 
 const languageColorPalette = [
   Color(0xFF4285F4), // blue

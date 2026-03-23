@@ -20,12 +20,7 @@ Future<void> main() async {
   );
   final preferences = await SharedPreferences.getInstance();
 
-  runApp(
-    ProviderScope(
-      overrides: [prefsProvider.overrideWithValue(preferences)],
-      child: MyApp(),
-    ),
-  );
+  runApp(ProviderScope(overrides: [prefsProvider.overrideWithValue(preferences)], child: MyApp()));
 }
 
 final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();

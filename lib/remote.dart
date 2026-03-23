@@ -16,15 +16,11 @@ class CFRepository {
   final String handle;
   final CodeforcesService _service;
 
-  CFRepository({required this.handle, required CodeforcesService service})
-      : _service = service;
+  CFRepository({required this.handle, required CodeforcesService service}) : _service = service;
 
   Future<bool> validateHandle({Future<void>? abortTrigger}) async {
     try {
-      final response = await _service.getUserInfo(
-        handle,
-        abortTrigger: abortTrigger,
-      );
+      final response = await _service.getUserInfo(handle, abortTrigger: abortTrigger);
       if (response.statusCode != 200) return false;
       final json = jsonDecode(response.bodyString);
       return json['status'] == 'OK';
@@ -39,12 +35,7 @@ class CFRepository {
     int count = 10,
     Future<void>? abortTrigger,
   }) async {
-    final response = await _service.getUserStatus(
-      handle,
-      from: from,
-      count: count,
-      abortTrigger: abortTrigger,
-    );
+    final response = await _service.getUserStatus(handle, from: from, count: count, abortTrigger: abortTrigger);
     if (response.statusCode != 200) {
       throw Exception('API error: ${response.statusCode}');
     }
@@ -61,8 +52,7 @@ class CFRepository {
     final submissions = <CFSubmission>[];
     for (final submission in decodedResponse['result']) {
       if (submission['contestId'] != null) {
-        submission['url'] =
-            'https://codeforces.com/contest/${submission["contestId"]}/submission/${submission["id"]}';
+        submission['url'] = 'https://codeforces.com/contest/${submission["contestId"]}/submission/${submission["id"]}';
       }
       final cfsubmission = CFSubmission.fromJson(submission);
       if (filters.isEmpty || filters.contains(cfsubmission.verdict)) {
@@ -86,17 +76,13 @@ class CFRepository {
       throw Exception('Failed to fetch submissions');
     }
 
-    final submissions = [
-      for (final s in decodedResponse['result'])
-        CFSubmission.fromJson(s),
-    ];
+    final submissions = [for (final s in decodedResponse['result']) CFSubmission.fromJson(s)];
 
     final langCounts = <String, int>{};
     final verdictCounts = <CFSubmissionVerdict, int>{};
 
     for (final s in submissions) {
-      langCounts[s.programmingLanguage] =
-          (langCounts[s.programmingLanguage] ?? 0) + 1;
+      langCounts[s.programmingLanguage] = (langCounts[s.programmingLanguage] ?? 0) + 1;
       if (s.verdict != null) {
         verdictCounts[s.verdict!] = (verdictCounts[s.verdict!] ?? 0) + 1;
       }

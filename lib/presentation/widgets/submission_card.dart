@@ -16,15 +16,10 @@ class SubmissionCard extends ConsumerWidget {
     final t = ref.watch(localeProvider);
     final color = verdictColor(item.verdict);
     final compact = context.isCompact;
-    final submitted = DateTime.fromMillisecondsSinceEpoch(
-      item.creationTimeSeconds * 1000,
-    );
+    final submitted = DateTime.fromMillisecondsSinceEpoch(item.creationTimeSeconds * 1000);
 
     return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.paddingMD,
-        vertical: context.spaceXS,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: context.paddingMD, vertical: context.spaceXS),
       child: Card(
         clipBehavior: Clip.antiAlias,
         child: InkWell(
@@ -49,11 +44,7 @@ class SubmissionCard extends ConsumerWidget {
                         Row(
                           children: [
                             if (!compact) ...[
-                              Icon(
-                                verdictIcon(item.verdict),
-                                color: color,
-                                size: context.iconSM,
-                              ),
+                              Icon(verdictIcon(item.verdict), color: color, size: context.iconSM),
                               SizedBox(width: context.paddingSM),
                             ],
                             Expanded(
@@ -72,17 +63,11 @@ class SubmissionCard extends ConsumerWidget {
                                 ),
                                 decoration: BoxDecoration(
                                   color: color.withValues(alpha: 0.15),
-                                  borderRadius: BorderRadius.circular(
-                                    context.radiusSM,
-                                  ),
+                                  borderRadius: BorderRadius.circular(context.radiusSM),
                                 ),
                                 child: Text(
                                   '${item.problem.rating}',
-                                  style: TextStyle(
-                                    fontSize: context.fontMD,
-                                    fontWeight: FontWeight.bold,
-                                    color: color,
-                                  ),
+                                  style: TextStyle(fontSize: context.fontMD, fontWeight: FontWeight.bold, color: color),
                                 ),
                               ),
                             ],
@@ -92,8 +77,7 @@ class SubmissionCard extends ConsumerWidget {
                         Text(
                           [
                             item.programmingLanguage,
-                            if (item.contestId != null)
-                              t.main.contestLabel(id: '${item.contestId}'),
+                            if (item.contestId != null) t.main.contestLabel(id: '${item.contestId}'),
                           ].join(' · '),
                           style: Theme.of(context).textTheme.bodySmall,
                           overflow: TextOverflow.ellipsis,
@@ -104,21 +88,13 @@ class SubmissionCard extends ConsumerWidget {
                             Flexible(
                               child: Text(
                                 [
-                                  t.main.runtime(
-                                    ms: '${item.timeConsumedMillis}',
-                                  ),
-                                  if (!compact)
-                                    t.main.memory(
-                                      kb: '${(item.memoryConsumedBytes / 1024).round()}',
-                                    ),
+                                  t.main.runtime(ms: '${item.timeConsumedMillis}'),
+                                  if (!compact) t.main.memory(kb: '${(item.memoryConsumedBytes / 1024).round()}'),
                                 ].join(' · '),
                                 overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context).textTheme.bodySmall
-                                    ?.copyWith(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.outline,
-                                    ),
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.outline),
                               ),
                             ),
                             if (!compact) ...[
@@ -127,12 +103,9 @@ class SubmissionCard extends ConsumerWidget {
                                 child: Text(
                                   timeago.format(submitted),
                                   overflow: TextOverflow.ellipsis,
-                                  style: Theme.of(context).textTheme.bodySmall
-                                      ?.copyWith(
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.outline,
-                                      ),
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.outline),
                                 ),
                               ),
                             ],

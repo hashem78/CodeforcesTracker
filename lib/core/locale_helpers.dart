@@ -7,8 +7,7 @@ extension TranslationsLocale on Translations {
   Locale get flutterLocale => Locale($meta.locale.languageCode);
 }
 
-Iterable<Locale> get supportedLocales =>
-    AppLocale.values.map((l) => Locale(l.languageCode));
+Iterable<Locale> get supportedLocales => AppLocale.values.map((l) => Locale(l.languageCode));
 
 const localizationsDelegates = [
   GlobalMaterialLocalizations.delegate,

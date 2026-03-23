@@ -7,6 +7,5 @@ part 'cfmember.g.dart';
 abstract class CFMember with _$CFMember {
   const factory CFMember(String handle, String? name) = _CFMember;
 
-  factory CFMember.fromJson(Map<String, dynamic> json) =>
-      _$CFMemberFromJson(json);
+  factory CFMember.fromJson(Map<String, dynamic> json) => _$CFMemberFromJson(json);
 }

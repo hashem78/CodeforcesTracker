@@ -10,23 +10,14 @@ class CFPieChart extends StatefulWidget {
   final List<CFVerdictsData>? verdictsData;
   final String chartTitle;
   final String id;
-  const CFPieChart({
-    super.key,
-    this.languagesData,
-    this.verdictsData,
-    required this.id,
-    required this.chartTitle,
-  }) : assert(
-         languagesData == null || verdictsData == null,
-         'Chart has to display a specific type of data',
-       );
+  const CFPieChart({super.key, this.languagesData, this.verdictsData, required this.id, required this.chartTitle})
+    : assert(languagesData == null || verdictsData == null, 'Chart has to display a specific type of data');
 
   @override
   State<CFPieChart> createState() => _CFPieChartState();
 }
 
-class _CFPieChartState extends State<CFPieChart>
-    with AutomaticKeepAliveClientMixin {
+class _CFPieChartState extends State<CFPieChart> with AutomaticKeepAliveClientMixin {
   int get _total {
     if (widget.languagesData != null) {
       return widget.languagesData!.fold(0, (sum, d) => sum + d.value);
@@ -38,19 +29,11 @@ class _CFPieChartState extends State<CFPieChart>
     if (widget.languagesData != null) {
       return widget.languagesData!.asMap().entries.map((e) {
         final color = languageColorPalette[e.key % languageColorPalette.length];
-        return _ChartEntry(
-          label: e.value.title,
-          value: e.value.value,
-          color: color,
-        );
+        return _ChartEntry(label: e.value.title, value: e.value.value, color: color);
       }).toList();
     }
     return widget.verdictsData!.map((d) {
-      return _ChartEntry(
-        label: d.verdict.name,
-        value: d.value,
-        color: verdictColor(d.verdict),
-      );
+      return _ChartEntry(label: d.verdict.name, value: d.value, color: verdictColor(d.verdict));
     }).toList();
   }
 
@@ -69,9 +52,7 @@ class _CFPieChartState extends State<CFPieChart>
             padding: EdgeInsets.all(context.paddingMD),
             child: Text(
               widget.chartTitle,
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
           ),
         Expanded(
@@ -90,11 +71,7 @@ class _CFPieChartState extends State<CFPieChart>
                       title: showLabel ? '${pct.toStringAsFixed(1)}%' : '',
                       color: e.color,
                       radius: context.chartRadius,
-                      titleStyle: TextStyle(
-                        fontSize: context.fontSM,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                      titleStyle: TextStyle(fontSize: context.fontSM, fontWeight: FontWeight.bold, color: Colors.white),
                     );
                   }).toList(),
                   sectionsSpace: 2,
@@ -106,12 +83,7 @@ class _CFPieChartState extends State<CFPieChart>
         ),
         if (!short)
           Padding(
-            padding: EdgeInsets.fromLTRB(
-              context.paddingLG,
-              context.spaceSM,
-              context.paddingLG,
-              context.spaceMD,
-            ),
+            padding: EdgeInsets.fromLTRB(context.paddingLG, context.spaceSM, context.paddingLG, context.spaceMD),
             child: Wrap(
               spacing: context.paddingMD,
               runSpacing: context.spaceXS,
@@ -123,10 +95,7 @@ class _CFPieChartState extends State<CFPieChart>
                     Container(
                       width: context.legendDot,
                       height: context.legendDot,
-                      decoration: BoxDecoration(
-                        color: e.color,
-                        shape: BoxShape.circle,
-                      ),
+                      decoration: BoxDecoration(color: e.color, shape: BoxShape.circle),
                     ),
                     SizedBox(width: context.paddingXS),
                     Flexible(
@@ -154,9 +123,5 @@ class _ChartEntry {
   final int value;
   final Color color;
 
-  const _ChartEntry({
-    required this.label,
-    required this.value,
-    required this.color,
-  });
+  const _ChartEntry({required this.label, required this.value, required this.color});
 }

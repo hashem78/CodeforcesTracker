@@ -25,22 +25,16 @@ class LandingScreen extends HookConsumerWidget {
       switch (next) {
         case AsyncData(value: HandleValidationResult.valid):
           scaffoldMessengerKey.currentState!.hideCurrentSnackBar();
-          final handle =
-              formKey.currentState!.fields['handle']!.value as String;
+          final handle = formKey.currentState!.fields['handle']!.value as String;
           context.router.push(MainRoute(handle: handle.trim()));
         case AsyncData(value: HandleValidationResult.invalid):
           scaffoldMessengerKey.currentState!.hideCurrentSnackBar();
-          formKey.currentState!.fields['handle']!.invalidate(
-            t.landing.validation.notFound,
-          );
+          formKey.currentState!.fields['handle']!.invalidate(t.landing.validation.notFound);
         case AsyncError():
           scaffoldMessengerKey.currentState!.hideCurrentSnackBar();
           scaffoldMessengerKey.currentState!.showSnackBar(
             SnackBar(
-              content: Text(
-                t.landing.error,
-                style: const TextStyle(color: Colors.red),
-              ),
+              content: Text(t.landing.error, style: const TextStyle(color: Colors.red)),
             ),
           );
         case _:
@@ -58,20 +52,14 @@ class LandingScreen extends HookConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () => context.router.push(const SettingsRoute()),
-          ),
+          IconButton(icon: const Icon(Icons.settings), onPressed: () => context.router.push(const SettingsRoute())),
         ],
       ),
       body: FormBuilder(
         key: formKey,
         child: Center(
           child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(
-              horizontal: context.paddingXL,
-              vertical: context.spaceMD,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: context.paddingXL, vertical: context.spaceMD),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: formMaxWidth),
               child: Column(
@@ -80,10 +68,7 @@ class LandingScreen extends HookConsumerWidget {
                   Text(
                     t.appTitle,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: context.fontXL,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: context.fontXL, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: context.spaceLG),
                   FormBuilderTextField(
@@ -98,14 +83,8 @@ class LandingScreen extends HookConsumerWidget {
                     ),
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(),
-                      FormBuilderValidators.minLength(
-                        3,
-                        errorText: t.landing.validation.minLength,
-                      ),
-                      FormBuilderValidators.maxLength(
-                        24,
-                        errorText: t.landing.validation.maxLength,
-                      ),
+                      FormBuilderValidators.minLength(3, errorText: t.landing.validation.minLength),
+                      FormBuilderValidators.maxLength(24, errorText: t.landing.validation.maxLength),
                       FormBuilderValidators.match(
                         RegExp(r'^[a-zA-Z0-9._-]+$'),
                         errorText: t.landing.validation.invalidChars,
@@ -121,10 +100,7 @@ class LandingScreen extends HookConsumerWidget {
                     ),
                     _ => SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: submit,
-                        child: Text(t.landing.track),
-                      ),
+                      child: ElevatedButton(onPressed: submit, child: Text(t.landing.track)),
                     ),
                   },
                 ],

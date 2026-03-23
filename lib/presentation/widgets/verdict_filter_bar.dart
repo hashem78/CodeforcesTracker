@@ -5,11 +5,7 @@ import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
 
 class VerdictFilterBar extends StatelessWidget {
-  const VerdictFilterBar({
-    super.key,
-    required this.activeFilters,
-    required this.onFiltersChanged,
-  });
+  const VerdictFilterBar({super.key, required this.activeFilters, required this.onFiltersChanged});
 
   final ISet<CFSubmissionVerdict> activeFilters;
   final ValueChanged<ISet<CFSubmissionVerdict>> onFiltersChanged;
@@ -20,10 +16,7 @@ class VerdictFilterBar extends StatelessWidget {
       height: context.filterBarHeight,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.symmetric(
-          horizontal: context.paddingMD,
-          vertical: context.spaceSM,
-        ),
+        padding: EdgeInsets.symmetric(horizontal: context.paddingMD, vertical: context.spaceSM),
         separatorBuilder: (_, _) => SizedBox(width: context.paddingSM),
         itemCount: CFSubmissionVerdict.values.length,
         itemBuilder: (context, index) {

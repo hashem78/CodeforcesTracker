@@ -7,13 +7,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'cfparty.freezed.dart';
 part 'cfparty.g.dart';
 
-enum CFParticipantType {
-  CONTESTANT,
-  PRACTICE,
-  VIRTUAL,
-  MANAGER,
-  OUT_OF_COMPETITION,
-}
+enum CFParticipantType { CONTESTANT, PRACTICE, VIRTUAL, MANAGER, OUT_OF_COMPETITION }
 
 @freezed
 abstract class CFParty with _$CFParty {
@@ -28,6 +22,5 @@ abstract class CFParty with _$CFParty {
     int startTimeSeconds,
   ) = _CFParty;
 
-  factory CFParty.fromJson(Map<String, dynamic> json) =>
-      _$CFPartyFromJson(json);
+  factory CFParty.fromJson(Map<String, dynamic> json) => _$CFPartyFromJson(json);
 }

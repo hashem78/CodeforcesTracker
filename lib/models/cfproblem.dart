@@ -21,6 +21,5 @@ abstract class CFProblem with _$CFProblem {
     IList<String> tags,
   ) = _CFProblem;
 
-  factory CFProblem.fromJson(Map<String, dynamic> json) =>
-      _$CFProblemFromJson(json);
+  factory CFProblem.fromJson(Map<String, dynamic> json) => _$CFProblemFromJson(json);
 }

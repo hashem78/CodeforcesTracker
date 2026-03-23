@@ -19,33 +19,23 @@ class StatisticsTab extends HookConsumerWidget {
       AsyncLoading() => const Center(child: CircularProgressIndicator()),
       AsyncError() => Center(child: Text(t.main.error)),
       AsyncData(:final value) => RefreshIndicator(
-          onRefresh: () async {
-            ref.invalidate(statisticsProvider(handle));
-          },
-          child: Scrollbar(
-            thumbVisibility: true,
+        onRefresh: () async {
+          ref.invalidate(statisticsProvider(handle));
+        },
+        child: Scrollbar(
+          thumbVisibility: true,
+          controller: pageController,
+          child: PageView(
             controller: pageController,
-            child: PageView(
-              controller: pageController,
-              scrollDirection: Axis.vertical,
-              restorationId: 'a',
-              children: [
-                CFPieChart(
-                  key: const Key('languages'),
-                  chartTitle: t.charts.languages,
-                  languagesData: value.$1,
-                  id: 'l',
-                ),
-                CFPieChart(
-                  key: const Key('verdicts'),
-                  verdictsData: value.$2,
-                  chartTitle: t.charts.verdicts,
-                  id: 'v',
-                ),
-              ],
-            ),
+            scrollDirection: Axis.vertical,
+            restorationId: 'a',
+            children: [
+              CFPieChart(key: const Key('languages'), chartTitle: t.charts.languages, languagesData: value.$1, id: 'l'),
+              CFPieChart(key: const Key('verdicts'), verdictsData: value.$2, chartTitle: t.charts.verdicts, id: 'v'),
+            ],
           ),
         ),
+      ),
     };
   }
 }

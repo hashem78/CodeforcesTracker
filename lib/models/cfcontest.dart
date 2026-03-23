@@ -7,13 +7,7 @@ part 'cfcontest.g.dart';
 
 enum CFContestType { CF, IOI, ICPC }
 
-enum CFConstestPhase {
-  BEFORE,
-  CODING,
-  PENDING_SYSTEM_TEST,
-  SYSTEM_TEST,
-  FINISHED,
-}
+enum CFConstestPhase { BEFORE, CODING, PENDING_SYSTEM_TEST, SYSTEM_TEST, FINISHED }
 
 @freezed
 abstract class CFContest with _$CFContest {
@@ -37,6 +31,5 @@ abstract class CFContest with _$CFContest {
     String? season,
   ) = _CFContest;
 
-  factory CFContest.fromJson(Map<String, dynamic> json) =>
-      _$CFContestFromJson(json);
+  factory CFContest.fromJson(Map<String, dynamic> json) => _$CFContestFromJson(json);
 }

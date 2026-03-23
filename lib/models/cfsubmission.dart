@@ -45,6 +45,5 @@ abstract class CFSubmission with _$CFSubmission {
     String? url,
   ) = _CFSubmission;
 
-  factory CFSubmission.fromJson(Map<String, dynamic> json) =>
-      _$CFSubmissionFromJson(json);
+  factory CFSubmission.fromJson(Map<String, dynamic> json) => _$CFSubmissionFromJson(json);
 }

@@ -20,10 +20,7 @@ class LocaleNotifier extends _$LocaleNotifier {
     return AppLocale.en.buildSync();
   }
 
-  AppLocale get currentLocale =>
-      AppLocale.values.firstWhere(
-        (l) => l.languageCode == state.$meta.locale.languageCode,
-      );
+  AppLocale get currentLocale => AppLocale.values.firstWhere((l) => l.languageCode == state.$meta.locale.languageCode);
 
   Future<void> setLocale(AppLocale locale) async {
     state = await locale.build();

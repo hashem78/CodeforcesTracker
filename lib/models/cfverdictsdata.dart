@@ -5,6 +5,5 @@ part 'cfverdictsdata.freezed.dart';
 
 @freezed
 abstract class CFVerdictsData with _$CFVerdictsData {
-  const factory CFVerdictsData(CFSubmissionVerdict verdict, int value) =
-      _CFVerdictsData;
+  const factory CFVerdictsData(CFSubmissionVerdict verdict, int value) = _CFVerdictsData;
 }

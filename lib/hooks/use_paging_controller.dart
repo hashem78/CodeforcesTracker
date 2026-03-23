@@ -28,11 +28,8 @@ class PagingResult<T> {
 
   final VoidCallback _resetNextFrom;
 
-  PagingResult._({
-    required this.controller,
-    required this.state,
-    required VoidCallback resetNextFrom,
-  }) : _resetNextFrom = resetNextFrom;
+  PagingResult._({required this.controller, required this.state, required VoidCallback resetNextFrom})
+    : _resetNextFrom = resetNextFrom;
 }
 
 /// A reusable hook that manages a [PagingController] with offset-based
@@ -93,9 +90,5 @@ PagingResult<T> usePagingController<T>({
 
   final state = useValueListenable(controller);
 
-  return PagingResult._(
-    controller: controller,
-    state: state,
-    resetNextFrom: () => nextFrom.value = 1,
-  );
+  return PagingResult._(controller: controller, state: state, resetNextFrom: () => nextFrom.value = 1);
 }

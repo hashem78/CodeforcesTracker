@@ -6,14 +6,10 @@ part 'codeforces_service.chopper.dart';
 
 @ChopperApi()
 abstract class CodeforcesService extends ChopperService {
-  static CodeforcesService create([ChopperClient? client]) =>
-      _$CodeforcesService(client);
+  static CodeforcesService create([ChopperClient? client]) => _$CodeforcesService(client);
 
   @GET(path: '/user.info')
-  Future<Response> getUserInfo(
-    @Query('handles') String handle, {
-    @AbortTrigger() Future<void>? abortTrigger,
-  });
+  Future<Response> getUserInfo(@Query('handles') String handle, {@AbortTrigger() Future<void>? abortTrigger});
 
   @GET(path: '/user.status')
   Future<Response> getUserStatus(
@@ -25,8 +21,5 @@ abstract class CodeforcesService extends ChopperService {
 }
 
 ChopperClient createCodeforcesClient() {
-  return ChopperClient(
-    baseUrl: Uri.parse('https://codeforces.com/api'),
-    services: [CodeforcesService.create()],
-  );
+  return ChopperClient(baseUrl: Uri.parse('https://codeforces.com/api'), services: [CodeforcesService.create()]);
 }

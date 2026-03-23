@@ -12,8 +12,7 @@ class HandleValidator extends _$HandleValidator {
   Completer<void>? _abort;
 
   @override
-  AsyncValue<HandleValidationResult> build() =>
-      const AsyncData(HandleValidationResult.invalid);
+  AsyncValue<HandleValidationResult> build() => const AsyncData(HandleValidationResult.invalid);
 
   Future<void> validate(String handle) async {
     // Cancel any in-flight request
@@ -25,9 +24,7 @@ class HandleValidator extends _$HandleValidator {
     try {
       final repo = ref.read(cfRepositoryProvider(handle));
       final valid = await repo.validateHandle(abortTrigger: _abort!.future);
-      state = AsyncData(
-        valid ? HandleValidationResult.valid : HandleValidationResult.invalid,
-      );
+      state = AsyncData(valid ? HandleValidationResult.valid : HandleValidationResult.invalid);
     } on Exception catch (e, st) {
       if (_abort?.isCompleted == true) return; // cancelled, ignore
       state = AsyncError(e, st);

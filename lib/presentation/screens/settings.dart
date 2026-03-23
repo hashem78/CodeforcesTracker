@@ -40,16 +40,8 @@ class _ThemeSection extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.fromLTRB(
-            context.paddingLG,
-            context.spaceMD,
-            context.paddingLG,
-            context.spaceSM,
-          ),
-          child: Text(
-            t.settings.theme,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
+          padding: EdgeInsets.fromLTRB(context.paddingLG, context.spaceMD, context.paddingLG, context.spaceSM),
+          child: Text(t.settings.theme, style: Theme.of(context).textTheme.titleMedium),
         ),
         RadioGroup<ThemeMode>(
           groupValue: themeMode,
@@ -60,18 +52,9 @@ class _ThemeSection extends ConsumerWidget {
           },
           child: Column(
             children: [
-              RadioListTile<ThemeMode>(
-                value: ThemeMode.system,
-                title: Text(t.theme.system),
-              ),
-              RadioListTile<ThemeMode>(
-                value: ThemeMode.light,
-                title: Text(t.theme.light),
-              ),
-              RadioListTile<ThemeMode>(
-                value: ThemeMode.dark,
-                title: Text(t.theme.dark),
-              ),
+              RadioListTile<ThemeMode>(value: ThemeMode.system, title: Text(t.theme.system)),
+              RadioListTile<ThemeMode>(value: ThemeMode.light, title: Text(t.theme.light)),
+              RadioListTile<ThemeMode>(value: ThemeMode.dark, title: Text(t.theme.dark)),
             ],
           ),
         ),
@@ -91,16 +74,8 @@ class _LanguageSection extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.fromLTRB(
-            context.paddingLG,
-            context.spaceMD,
-            context.paddingLG,
-            context.spaceSM,
-          ),
-          child: Text(
-            t.settings.language,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
+          padding: EdgeInsets.fromLTRB(context.paddingLG, context.spaceMD, context.paddingLG, context.spaceSM),
+          child: Text(t.settings.language, style: Theme.of(context).textTheme.titleMedium),
         ),
         RadioGroup<AppLocale>(
           groupValue: currentLocale,
@@ -112,10 +87,7 @@ class _LanguageSection extends ConsumerWidget {
           child: Column(
             children: [
               for (final locale in AppLocale.values)
-                RadioListTile<AppLocale>(
-                  value: locale,
-                  title: Text(_localeName(locale)),
-                ),
+                RadioListTile<AppLocale>(value: locale, title: Text(_localeName(locale))),
             ],
           ),
         ),
