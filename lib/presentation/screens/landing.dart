@@ -40,7 +40,7 @@ class LandingScreen extends HookConsumerWidget {
           scaffoldMessengerKey.currentState!.hideCurrentSnackBar();
           final handle = formKey.currentState!.fields['handle']!.value as String;
           ref.read(handleProvider.notifier).set(handle.trim());
-          context.router.push(MainRoute(handle: handle.trim()));
+          context.router.replace(MainRoute(handle: handle.trim()));
         case AsyncData(value: HandleValidationResult.invalid):
           scaffoldMessengerKey.currentState!.hideCurrentSnackBar();
           formKey.currentState!.fields['handle']!.invalidate(t.landing.validation.notFound);
